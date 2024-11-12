@@ -16,6 +16,7 @@ end
 SWEP:AddHook("Initialize", "sound", function(self)
     self.curbeep=0
     self.eyeangles=Angle(0,0,0)
+    self.mutesonic=false
     self:UpdateSounds()
 end)
 
@@ -90,9 +91,11 @@ SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
         StopSound(other_sound)
     end
 
-    if keydown2 then
-        ProcessSound(self.sound2, self.sound1)
-    elseif keydown1 then
-        ProcessSound(self.sound1, self.sound2)
+    if self.mutesonic == false then
+        if keydown2 then
+            ProcessSound(self.sound2, self.sound1)
+        elseif keydown1 then
+            ProcessSound(self.sound1, self.sound2)
+        end
     end
 end)

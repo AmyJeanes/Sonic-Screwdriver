@@ -151,10 +151,12 @@ end
 -- Called when the player Shoots
 ----------------------------------------------
 function SWEP:PrimaryAttack()
+    self:CallHook("PrimaryAttack")
 end
  
 ----------------------------------------------
 -- Called when the player Uses secondary attack
 ----------------------------------------------
 function SWEP:SecondaryAttack() 
+    self:CallHook("SecondaryAttack")
 end
