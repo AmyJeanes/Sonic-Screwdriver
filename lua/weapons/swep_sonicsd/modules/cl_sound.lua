@@ -50,7 +50,7 @@ SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
         end
     end
 
-    if tobool(GetConVarNumber("sonic_sound"))~=true or (not keydown1 and not keydown2) or self.mutesonic==true then
+    if tobool(GetConVarNumber("sonic_sound"))~=true or (not keydown1 and not keydown2) or self.mutesonic then
         StopSound(self.sound1)
         StopSound(self.sound2)
         self.sound_start = nil
@@ -91,7 +91,7 @@ SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
         StopSound(other_sound)
     end
 
-    if self.mutesonic == false then
+    if not self.mutesonic then
         if keydown2 then
             ProcessSound(self.sound2, self.sound1)
         elseif keydown1 then

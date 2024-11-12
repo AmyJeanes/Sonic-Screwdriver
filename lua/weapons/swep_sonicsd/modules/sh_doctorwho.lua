@@ -30,6 +30,8 @@ if SERVER then
     end
 
     SWEP:AddHook("Reload", "doctorwho", function(self)
+        if(self.disablereload) then return end
+        
         local tardis = self.Owner.linked_tardis
         if IsValid(tardis) then
             local moving = (tardis.moving or (tardis.GetData and tardis:GetData("teleport",false)))

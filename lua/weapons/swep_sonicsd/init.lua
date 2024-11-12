@@ -19,6 +19,7 @@ function SWEP:Initialize()
     self.reloadcur=0
     self.mode=false
     self._initqueue={}
+    self.disablereload=false
 end
 
 function SWEP:Go(ent, trace, keydown1, keydown2)
