@@ -1,12 +1,3 @@
-------------------------------------------------
---Author Info
-------------------------------------------------
-SWEP.Author             = "Dr. Matt"
-SWEP.Contact            = "mattjeanes23@gmail.com"
-SWEP.Purpose            = "Opening doors"
-SWEP.Instructions       = "Point and press"
-------------------------------------------------
-
 SWEP.Category = DEBUG_SONICSD_SPAWNMENU_CATEGORY_OVERRIDE or "Doctor Who - Sonic Tools"
 
 SWEP.Spawnable = false
@@ -29,6 +20,12 @@ function SWEP:SetSonicID(id)
             net.Start("SonicSD-Update")
                 net.WriteString(id)
             net.Send(self.Owner)
+        end
+    else
+        if file.Exists("materials/vgui/weapons/sonic/"..sonic.ID.."_wepselect.png","GAME") then
+            self.WepSelectIcon = Material("vgui/weapons/sonic/"..sonic.ID.."_wepselect.png")
+        else
+            self.WepSelectIcon = Material("vgui/weapons/sonic/default_wepselect.png")
         end
     end
     self:CallHook("SonicChanged")
