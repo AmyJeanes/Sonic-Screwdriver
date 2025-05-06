@@ -5,9 +5,10 @@ SWEP.Slot               = 2
 SWEP.SlotPos            = 1
 SWEP.DrawAmmo           = false
 SWEP.DrawCrosshair      = true
+SWEP.WepSelectIcon      = Material("vgui/weapons/sonic/default_wepselect.png")
 
 function SWEP:Initialize()
-    self:SetHoldType( self.HoldType )
+    self:SetHoldType(self.HoldType)
     net.Start("SonicSD-Initialize")
         net.WriteEntity(self)
     net.SendToServer()
