@@ -70,13 +70,11 @@ function SWEP:PostDrawViewModel()
 end
 
 function SWEP:DrawWeaponSelection(x,y,wide,tall,alpha)
-    surface.SetDrawColor( 255, 255, 255, alpha )
-    surface.SetMaterial( self.WepSelectIcon )
-    
-    y = y + 10
-    x = x + 10
-    wide = wide - 20
-    
+    y=y+10
+    x=x+10
+    wide=wide-20
+    surface.SetDrawColor(255,255,255,alpha)
+    surface.SetMaterial(self.WepSelectIcon)
     surface.DrawTexturedRect(x,y,wide,(wide/2))
 end
 
