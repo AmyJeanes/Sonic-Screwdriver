@@ -69,6 +69,15 @@ function SWEP:PostDrawViewModel()
     end
 end
 
+function SWEP:DrawWeaponSelection(x,y,wide,tall,alpha)
+    y=y+10
+    x=x+10
+    wide=wide-20
+    surface.SetDrawColor(255,255,255,alpha)
+    surface.SetMaterial(self.WepSelectIcon)
+    surface.DrawTexturedRect(x,y,wide,(wide/2))
+end
+
 function SWEP:Think()
     if self._ready then
         local keydown1=LocalPlayer():KeyDown(IN_ATTACK)
