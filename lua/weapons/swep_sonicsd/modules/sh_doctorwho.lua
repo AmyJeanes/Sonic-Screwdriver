@@ -29,6 +29,25 @@ if SERVER then
         self.Owner.tardis_ang=nil
     end
 
+    local function LookAtPlayer(self, trace, ang)
+        if (trace.HitNormal == Vector(0,0,1)) then
+            local hitpos = trace.HitPos
+            local plypos = self.Owner:GetPos()
+            local x = plypos.x - hitpos.x
+            local y = plypos.y - hitpos.y
+            local fullAng = (90/(math.abs(x)+math.abs(y)))*x
+            if y > 0 then
+                fullAng = -(fullAng)-180
+            end
+            fullAng = fullAng-90
+            snapAng = (math.SnapTo(fullAng, 15))
+            ang:RotateAroundAxis( ang:Up(), snapAng )
+            return ang
+        else
+            return ang
+        end
+    end
+
     SWEP:AddHook("Reload", "doctorwho", function(self)
         local tardis = self.Owner.linked_tardis
         if IsValid(tardis) then
@@ -47,6 +66,7 @@ if SERVER then
                 self.Owner.tardis_vec=trace.HitPos
                 local ang=trace.HitNormal:Angle()
                 ang:RotateAroundAxis( ang:Right(), -90 )
+                ang = LookAtPlayer(self, trace, ang)
                 self.Owner.tardis_ang=ang
                 local success = self:MoveTARDIS(tardis, function(success)
                     if success then
@@ -216,6 +236,7 @@ if SERVER then
                 self.Owner.tardis_vec=data.trace.HitPos
                 local ang=data.trace.HitNormal:Angle()
                 ang:RotateAroundAxis( ang:Right( ), -90 )
+                ang = LookAtPlayer(self, data.trace, ang)
                 self.Owner.tardis_ang=ang
                 local success = false
                 if IsValid(tardis) and ((IsLegacy(tardis) and tardis.invortex) or ((not IsLegacy(tardis)) and tardis:GetData("vortex"))) then
