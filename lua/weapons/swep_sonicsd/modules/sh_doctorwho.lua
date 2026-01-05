@@ -30,7 +30,7 @@ if SERVER then
     end
 
     local function LookAtPlayer(self, trace, ang)
-        if (trace.HitNormal == Vector(0,0,1)) then
+        if math.abs(trace.HitNormal.z - 1) < 0.01 then
             local hitpos = trace.HitPos
             local plypos = self.Owner:GetPos()
             local x = plypos.x - hitpos.x
