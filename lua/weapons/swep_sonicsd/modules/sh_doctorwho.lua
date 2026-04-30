@@ -235,10 +235,14 @@ if SERVER then
                 end
                 TARDIS_MSG(self:GetOwner(), tardis, "TARDIS destination unset.")
             else
-                self:GetOwner().tardis_vec=data.trace.HitPos
-                local ang=data.trace.HitNormal:Angle()
+                ---@type TraceResult
+                local trace = data.trace
+                local hitNormal = trace.HitNormal
+                if not hitNormal then return end
+                self:GetOwner().tardis_vec=trace.HitPos
+                local ang=hitNormal:Angle()
                 ang:RotateAroundAxis( ang:Right( ), -90 )
-                ang = LookAtPlayer(self, data.trace, ang)
+                ang = LookAtPlayer(self, trace, ang)
                 self:GetOwner().tardis_ang=ang
                 if IsValid(tardis) and ((IsLegacy(tardis) and tardis.invortex) or ((not IsLegacy(tardis)) and tardis:GetData("vortex"))) then
                     tardis:SetDestination(data.trace.HitPos,ang)
