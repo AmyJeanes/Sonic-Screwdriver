@@ -31,7 +31,7 @@ function SWEP:HandleAnimation(anim, viewModel)
     if anim.enabled and anim.pos ~= anim.target then
         anim.pos = math.Approach(anim.pos, anim.target, FrameTime() * 5 * anim.speed)
     end
-    if self.Owner == LocalPlayer() then
+    if self:GetOwner() == LocalPlayer() then
         viewModel:SetPoseParameter(anim.param, anim.pos)
     end
     self:SetPoseParameter(anim.param, anim.pos)
@@ -61,12 +61,12 @@ end)
 SWEP:AddHook("Think", "animation", function(self)
     if not self.anims then return end
 
-    local viewModel = self.Owner==LocalPlayer() and self.Owner:GetViewModel()
+    local viewModel = self:GetOwner()==LocalPlayer() and self:GetOwner():GetViewModel()
     if not IsValid(viewModel) then viewModel = nil end
 
     if self.anims.active then
-        local keydown1=self.Owner:KeyDown(IN_ATTACK)
-        local keydown2=self.Owner:KeyDown(IN_ATTACK2)
+        local keydown1=self:GetOwner():KeyDown(IN_ATTACK)
+        local keydown2=self:GetOwner():KeyDown(IN_ATTACK2)
         if keydown1 or keydown2 then
             if keydown1 then
                 if self.anims.active.pos == 1 then
@@ -87,8 +87,8 @@ SWEP:AddHook("Think", "animation", function(self)
     end
 
     if self.anims.toggle then
-        local keydown1=self.Owner:KeyDown(IN_ATTACK)
-        local keydown2=self.Owner:KeyDown(IN_ATTACK2)
+        local keydown1=self:GetOwner():KeyDown(IN_ATTACK)
+        local keydown2=self:GetOwner():KeyDown(IN_ATTACK2)
         if keydown1 or keydown2 then
             self.anims.toggle.target = 1
         else
@@ -96,7 +96,7 @@ SWEP:AddHook("Think", "animation", function(self)
         end
     end
 
-    for k,v in pairs(self.anims) do
+    for _,v in pairs(self.anims) do
         self:HandleAnimation(v, viewModel)
     end
 end)

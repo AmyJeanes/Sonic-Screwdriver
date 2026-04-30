@@ -150,7 +150,7 @@ if SERVER then
 
     hook.Add("PlayerLoadout", "sonicsd", function(ply)
         if tobool(ply:GetInfoNum("sonic_give_on_spawn",0)) then
-            local id=ply:GetInfo("sonic_model","default")
+            local id=ply:GetInfo("sonic_model")
             SonicSD:GiveSonic(ply, nil, {id})
         end
     end)

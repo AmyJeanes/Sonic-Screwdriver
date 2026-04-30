@@ -11,9 +11,9 @@ SWEP:AddFunction(function(self,data)
         local hacked=tobool(data.ent:GetSaveTable().m_bHackedByAlyx)
         data.ent:SetSaveValue("m_bHackedByAlyx", (not hacked))
         if not hacked then -- this is because the variable is reversed after 'hacked' is set.
-            self.Owner:ChatPrint("NPC now friendly.")
+            self:GetOwner():ChatPrint("NPC now friendly.")
         else
-            self.Owner:ChatPrint("NPC no longer friendly.")
+            self:GetOwner():ChatPrint("NPC no longer friendly.")
         end
     end
 end)
@@ -41,11 +41,11 @@ SWEP:AddFunction(function(self,data)
         if data.keydown1 and not data.keydown2 then
             data.ent:Fire("MissileOff", 0)
             data.ent:Fire("GunOff", 0)
-            self.Owner:ChatPrint("Helicopter weaponry disabled.")
+            self:GetOwner():ChatPrint("Helicopter weaponry disabled.")
         elseif data.keydown2 and not data.keydown1 then
             data.ent:Fire("GunOn", 0)
             data.ent:Fire("MissileOn", 0)
-            self.Owner:ChatPrint("Helicopter weaponry enabled.")
+            self:GetOwner():ChatPrint("Helicopter weaponry enabled.")
         end
     end
 end)
@@ -61,9 +61,9 @@ SWEP:AddFunction(function(self,data)
         local hacked=tobool(data.ent:GetSaveTable().m_bPlacedByPlayer)
         data.ent:SetSaveValue("m_bPlacedByPlayer", (not hacked))
         if not hacked then -- this is because the variable is reversed after 'hacked' is set.
-            self.Owner:ChatPrint("Hopper Mine now friendly.")
+            self:GetOwner():ChatPrint("Hopper Mine now friendly.")
         else
-            self.Owner:ChatPrint("Hopper Mine no longer friendly.")
+            self:GetOwner():ChatPrint("Hopper Mine no longer friendly.")
         end
     end
 end)
@@ -77,11 +77,11 @@ end)
 SWEP:AddFunction(function(self,data)
     if data.ent:IsNPC() and data.hooks.cantool then
         if data.keydown1 and not data.keydown2 then
-            data.ent:AddEntityRelationship(self.Owner, D_LI, 999)
-            self.Owner:ChatPrint("NPC now friendly towards you.")
+            data.ent:AddEntityRelationship(self:GetOwner(), D_LI, 999)
+            self:GetOwner():ChatPrint("NPC now friendly towards you.")
         elseif data.keydown2 and not data.keydown1 then
-            data.ent:AddEntityRelationship(self.Owner, D_HT, 999)
-            self.Owner:ChatPrint("NPC no longer friendly towards you.")
+            data.ent:AddEntityRelationship(self:GetOwner(), D_HT, 999)
+            self:GetOwner():ChatPrint("NPC no longer friendly towards you.")
         end
     end
 end)

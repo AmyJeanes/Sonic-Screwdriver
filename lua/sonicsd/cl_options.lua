@@ -9,7 +9,7 @@ local checkbox_options={
     {"Enable default colors for each sonic", "sonic_should_set_default_colors", true, false},
 }
 
-for k,v in pairs(checkbox_options) do
+for _,v in pairs(checkbox_options) do
     CreateClientConVar(v[2], v[3] and "1" or "0", true, v[4])
 end
 
@@ -44,18 +44,18 @@ hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
 
         local comboBox = vgui.Create("DComboBox")
         comboBox:SetText("Model")
-        for k,v in pairs(SonicSD.sonics) do
+        for _,v in pairs(SonicSD.sonics) do
             if not v.IsBase then
                 v.OptionID=comboBox:AddChoice(v.Name,v.ID)
             end
         end
         local selectedmodel=GetConVarString("sonic_model")
-        for k,v in pairs(SonicSD.sonics) do
+        for _,v in pairs(SonicSD.sonics) do
             if not v.IsBase and selectedmodel==v.ID then
-                comboBox:ChooseOption(v.OptionID)
+                comboBox:ChooseOptionID(v.OptionID)
             end
         end
-        comboBox.OnSelect = function(panel,index,value,data)
+        comboBox.OnSelect = function(_box,index,value,data)
             RunConsoleCommand("sonic_model", data)
         end
         panel:AddItem(comboBox)
@@ -109,10 +109,10 @@ hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
         panel:AddItem(Mixer3)
 
         local checkboxes={}
-        for k,v in pairs(checkbox_options) do
+        for _,v in pairs(checkbox_options) do
             local checkBox = vgui.Create( "DCheckBoxLabel" )
             checkBox:SetText( v[1] )
-            checkBox:SetValue( GetConVarNumber( v[2] ) )
+            checkBox:SetValue( GetConVar(v[2]):GetBool() )
             checkBox:SetConVar( v[2] )
             panel:AddItem(checkBox)
             table.insert(checkboxes, checkBox)

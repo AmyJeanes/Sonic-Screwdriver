@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: undefined-global
 SWEP.Category = DEBUG_SONICSD_SPAWNMENU_CATEGORY_OVERRIDE or "Doctor Who - Sonic Tools"
 
 SWEP.Spawnable = false
@@ -16,10 +17,10 @@ function SWEP:SetSonicID(id)
         self.ViewModel=sonic.ViewModel
         self.WorldModel=sonic.WorldModel
         self:SetModel(self.WorldModel)
-        if IsValid(self.Owner) then
+        if IsValid(self:GetOwner()) then
             net.Start("SonicSD-Update")
                 net.WriteString(id)
-            net.Send(self.Owner)
+            net.Send(self:GetOwner())
         end
     else
         if file.Exists("materials/vgui/weapons/sonic/"..sonic.ID.."_wepselect.png","GAME") then
@@ -102,7 +103,7 @@ end
 function SWEP:CallHook(name,...)
     if not self.hooks[name] then return end
     local a,b,c,d,e,f
-    for k,v in pairs(self.hooks[name]) do
+    for _,v in pairs(self.hooks[name]) do
         a,b,c,d,e,f = v(self,...)
         if ( a ~= nil ) then
             return a,b,c,d,e,f

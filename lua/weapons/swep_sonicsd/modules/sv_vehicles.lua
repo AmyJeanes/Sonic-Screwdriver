@@ -30,13 +30,13 @@ end)
 
 SWEP:AddFunction(function(self,data)
     if string.find( data.class, "sent_sakarias_car" ) and not (string.find( data.class, "sent_sakarias_carwheel" ) or string.find( data.class, "sent_sakarias_carwheel_punked" ) or data.ent.IsDestroyed == 1) then
-        if data.ent:PlayerCanUseLock( self.Owner ) then
+        if data.ent:PlayerCanUseLock( self:GetOwner() ) then
             if data.ent:IsLocked() then
                 data.ent:UnLock( true )
-                self.Owner:ChatPrint("SCar unlocked.")
+                self:GetOwner():ChatPrint("SCar unlocked.")
             else
                 data.ent:Lock( true )
-                self.Owner:ChatPrint("SCar locked.")
+                self:GetOwner():ChatPrint("SCar locked.")
             end
         end
     end
