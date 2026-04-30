@@ -11,26 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           path: Sonic-Screwdriver
 
       - name: Checkout TARDIS
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: AmyJeanes/TARDIS
           ref: dev
           path: TARDIS
 
       - name: Checkout TARDIS-Legacy
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: AmyJeanes/TARDIS-Legacy
           ref: dev
           path: TARDIS-Legacy
 
       - name: Checkout wire
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: wiremod/wire
           ref: master
