@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+  push:
+    branches:
+      - dev
+      - renovate/*
+  workflow_dispatch:
+
+jobs:
+  glua-check:
+    name: GLua Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          path: Sonic-Screwdriver
+
+      - name: Checkout TARDIS
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          repository: AmyJeanes/TARDIS
+          ref: dev
+          path: TARDIS
+
+      - name: Checkout TARDIS-Legacy
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          repository: AmyJeanes/TARDIS-Legacy
+          ref: dev
+          path: TARDIS-Legacy
+
+      - name: Checkout wire
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          repository: wiremod/wire
+          ref: master
+          path: wire
+
+      - name: Run glua_check
+        working-directory: Sonic-Screwdriver
+        shell: pwsh
+        run: ./scripts/glua-check.ps1
