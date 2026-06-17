@@ -80,7 +80,7 @@ For static analysis, `.luarc.json` references the *real* sibling addons rather t
 
 Workspace.library entries are *analysis sources*, not *diagnostic targets* — TARDIS's own warnings don't bleed into Sonic-Screwdriver's output. If a contributor clones Sonic-Screwdriver without those siblings present, glua_ls warns about missing library paths and the optional-call sites go back to `undefined-global` / `undefined-field`, but the rest of the analysis is unaffected. This is the same pattern TARDIS itself uses (`../Doors`, `../world-portals`, `../Sonic-Screwdriver`, `../wire` in its own `.luarc.json`).
 
-There is intentionally **no `diagnostics.disable` block in `.luarc.json`** — every rule earns its keep. Prefer code-level fixes or targeted annotations over global suppression.
+The `.luarc.json` carries a **small, temporary `diagnostics.disable` block** (`need-check-nil`, `unchecked-nil-access`, `undefined-field`) — glua_ls 1.0.20+'s flow-based nil analysis and dynamic-dispatch checks flood false positives on GMod entity/weapon `self` (zero real bugs). Every other rule earns its keep — prefer code-level fixes or targeted annotations — and re-enable once `Pollux12/gmod-glua-ls` improves.
 
 ### Type annotations
 

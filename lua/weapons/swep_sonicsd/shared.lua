@@ -1,4 +1,4 @@
----@diagnostic disable-next-line: undefined-global
+---@diagnostic disable-next-line: undefined-global, undefined-global-assignment
 SWEP.Category = DEBUG_SONICSD_SPAWNMENU_CATEGORY_OVERRIDE or "Doctor Who - Sonic Tools"
 
 SWEP.Spawnable = false
