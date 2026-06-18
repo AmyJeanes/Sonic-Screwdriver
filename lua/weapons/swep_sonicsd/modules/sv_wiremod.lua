@@ -2,27 +2,28 @@
 
 SWEP:AddFunction(function(self,data)
     if data.class=="gmod_wire_keypad" and WireLib and data.hooks.cantool then
+        local keypad = data.ent --[[@as gmod_wire_keypad]]
         -- bit hacky but the keypad hates everyone
         if data.keydown1 and not data.keydown2 then
-            data.ent:SetDisplayText("y")
-            Wire_TriggerOutput(data.ent, "Valid", 1)
-            data.ent:EmitSound("buttons/button9.wav")
+            keypad:SetDisplayText("y")
+            Wire_TriggerOutput(keypad, "Valid", 1)
+            keypad:EmitSound("buttons/button9.wav")
         elseif data.keydown2 and not data.keydown1 then
-            data.ent:SetDisplayText("n")
-            Wire_TriggerOutput(data.ent, "Invalid", 1)
-            data.ent:EmitSound("buttons/button8.wav")
+            keypad:SetDisplayText("n")
+            Wire_TriggerOutput(keypad, "Invalid", 1)
+            keypad:EmitSound("buttons/button8.wav")
         end
         local access = data.keydown1 and not data.keydown2
         if access or (data.keydown2 and not data.keydown1) then
-            data.ent.CurrentNum = -1
-            timer.Create("wire_keypad_"..data.ent:EntIndex().."_"..tostring(access), 2, 1, function()
-                if IsValid(data.ent) then
-                    data.ent:SetDisplayText("")
-                    data.ent.CurrentNum = 0
+            keypad.CurrentNum = -1
+            timer.Create("wire_keypad_"..keypad:EntIndex().."_"..tostring(access), 2, 1, function()
+                if IsValid(keypad) then
+                    keypad:SetDisplayText("")
+                    keypad.CurrentNum = 0
                     if access then
-                        Wire_TriggerOutput(data.ent, "Valid", 0)
+                        Wire_TriggerOutput(keypad, "Valid", 0)
                     else
-                        Wire_TriggerOutput(data.ent, "Invalid", 0)
+                        Wire_TriggerOutput(keypad, "Invalid", 0)
                     end
                 end
             end)

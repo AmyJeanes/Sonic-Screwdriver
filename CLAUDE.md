@@ -80,7 +80,13 @@ For static analysis, `.luarc.json` references the *real* sibling addons rather t
 
 Workspace.library entries are *analysis sources*, not *diagnostic targets* — TARDIS's own warnings don't bleed into Sonic-Screwdriver's output. If a contributor clones Sonic-Screwdriver without those siblings present, glua_ls warns about missing library paths and the optional-call sites go back to `undefined-global` / `undefined-field`, but the rest of the analysis is unaffected. This is the same pattern TARDIS itself uses (`../Doors`, `../world-portals`, `../Sonic-Screwdriver`, `../wire` in its own `.luarc.json`).
 
-The `.luarc.json` carries a **small, temporary `diagnostics.disable` block** (`need-check-nil`, `unchecked-nil-access`, `undefined-field`) — glua_ls 1.0.20+'s flow-based nil analysis and dynamic-dispatch checks flood false positives on GMod entity/weapon `self` (zero real bugs). Every other rule earns its keep — prefer code-level fixes or targeted annotations — and re-enable once `Pollux12/gmod-glua-ls` improves.
+`.luarc.json` runs with **every diagnostic rule enabled** — there is no project-wide `diagnostics.disable` block. glua_ls 1.0.20+'s `need-check-nil` / `unchecked-nil-access` / `undefined-field` were briefly disabled wholesale when they first shipped, but the warnings they raised turned out to be either real or fixable with one annotation:
+
+- **`undefined-field`** — `self.anims` is built with dynamic string keys, so named access (`.mode`) looked undefined. Fixed by the `SonicSDAnim` class plus `---@type table<string, SonicSDAnim>` on the field (`cl_animation.lua`).
+- **`unchecked-nil-access`** — flagged redundant `self:GetOwner().linked_tardis` re-reads (the validated local `tardis` should be used instead) and an unguarded `e.interior:GetSecurity()` deref (`sh_doctorwho.lua`). Fixed by using the validated locals and an `IsValid` guard.
+- **`need-check-nil`** — `SWEP:GetSonic()` inferred a nilable return; annotated `---@return table` since it always falls back to the `default` entry. A client-side owner re-read was cached into a local.
+
+The one subtle case is `sv_wiremod.lua`: `IsValid()` narrows the untyped `data.ent` to a bare `Entity`, which the stubs don't know carries the keypad's `SetDisplayText` / `CurrentNum` — those are built at runtime (a `NetworkVar` accessor and a plain field write) with no static definition. Rather than disable the rule, `.luatypes/wire.lua` declares `---@class gmod_wire_keypad : Entity` (only the members we use) and `sv_wiremod.lua` casts `data.ent` to it; `IsValid()` preserves the cast type, so the members resolve. `.luatypes/` is the home for external/engine type shapes the glua-api stubs miss (it already overrides `table.insert` and `Panel:Add` in `glua_overrides.lua`) — distinct from project-specific *globals*, which stay inline at their use site. Prefer code-level fixes or targeted annotations over a blanket disable.
 
 ### Type annotations
 

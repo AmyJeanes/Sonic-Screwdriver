@@ -1,5 +1,12 @@
 -- Animation
 
+---@class SonicSDAnim
+---@field speed number
+---@field param string
+---@field pos number
+---@field target number
+---@field enabled boolean
+
 function SWEP:SetupAnimation(name, data)
     self.anims[name] = {}
     self.anims[name].speed = data.Speed or 1
@@ -14,6 +21,7 @@ function SWEP:SetupAnimations()
     local sonic=self:GetSonic()
     if not sonic.Animations then return end
     local anims = sonic.Animations
+    ---@type table<string, SonicSDAnim>
     self.anims = {}
     if anims.Mode then
         self:SetupAnimation("mode", anims.Mode)

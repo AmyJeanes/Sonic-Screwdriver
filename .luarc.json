@@ -2,13 +2,6 @@
     "runtime": {
         "version": "LuaJIT"
     },
-    "diagnostics": {
-        "disable": [
-            "need-check-nil",
-            "unchecked-nil-access",
-            "undefined-field"
-        ]
-    },
     "workspace": {
         "library": [
             "./.tools/glua-api",
