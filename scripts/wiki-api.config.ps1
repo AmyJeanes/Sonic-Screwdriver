@@ -2,6 +2,7 @@
     WikiBaseUrl = 'https://github.com/AmyJeanes/Sonic-Screwdriver/wiki'
     Categories = @(
         @{ Title = 'Animation Reference'; File = 'Animation-Reference'; Roots = @('sonicsd_anim') }
+        @{ Title = 'Functions Reference'; File = 'Functions-Reference'; Kind = 'functions'; Class = 'SonicSD' }
         @{ Title = 'Hooks Reference';     File = 'Hooks-Reference';     Kind = 'hooks'; EntityListen = 'SWEP:AddHook(name, id, func)' }
         @{ Title = 'ConVars Reference';   File = 'ConVars-Reference';   Kind = 'convars' }
     )

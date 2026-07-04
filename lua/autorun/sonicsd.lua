@@ -1,5 +1,6 @@
 -- Sonic
 
+---@class SonicSD
 SonicSD=SonicSD or {}
 function SonicSD:LoadFolder(folder,addonly,noprefix)
     if folder then

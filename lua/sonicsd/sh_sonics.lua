@@ -39,6 +39,7 @@ end
 
 
 SonicSD.sonics={}
+---@api
 function SonicSD:AddSonic(t)
     local base = table.Copy(self.sonics[t.Base] or self.sonics.base)
     if base then
@@ -122,6 +123,7 @@ hook.Add("PostGamemodeLoaded", "sonicsd", function()
 end)
 
 if SERVER then
+    ---@api
     function SonicSD:GiveSonic(ply, command, args)
         local sonicID = args[1]
         if not IsValid(ply) then return end
