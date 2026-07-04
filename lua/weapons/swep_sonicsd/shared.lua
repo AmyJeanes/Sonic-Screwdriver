@@ -6,10 +6,12 @@ SWEP.AdminSpawnable = false
 
 SWEP.UseHands = true
 
+---@api
 function SWEP:GetSonicID()
     return self.sonicid
 end
 
+---@api
 function SWEP:SetSonicID(id)
     self.sonicid = id
     local sonic = self:GetSonic()
@@ -37,6 +39,7 @@ function SWEP:GetSonicMode()
     return self.mode
 end
 
+---@api
 function SWEP:SetSonicMode(mode)
     self.mode = mode
     self:CallHook("ModeChanged", mode)
@@ -85,6 +88,7 @@ SWEP.HoldType = "pistol"
 
 SWEP.functions={}
 
+---@api
 function SWEP:AddFunction(func)
     table.insert(self.functions,func)
 end
@@ -92,17 +96,20 @@ end
 SWEP.hooks={}
 
 -- Hook system for modules
+---@api
 function SWEP:AddHook(name,id,func)
     if not (self.hooks[name]) then self.hooks[name]={} end
     self.hooks[name][id]=func
 end
 
+---@api
 function SWEP:RemoveHook(name,id)
     if self.hooks[name] and self.hooks[name][id] then
         self.hooks[name][id]=nil
     end
 end
 
+---@api
 function SWEP:CallHook(name,...)
     if not self.hooks[name] then return end
     local a,b,c,d,e,f
@@ -114,6 +121,7 @@ function SWEP:CallHook(name,...)
     end
 end
 
+---@api
 function SWEP:LoadFolder(folder,addonly,noprefix)
     folder="weapons/swep_sonicsd/"..folder.."/"
     local modules = file.Find(folder.."*.lua","LUA")

@@ -15,20 +15,24 @@ function SonicSD:UpdateFavoritesFile()
     file.Write(filename, SonicSD.von.serialize(favorites))
 end
 
+---@api
 function SonicSD:AddFavorite(id)
     favorites[id] = true
     self:UpdateFavoritesFile()
 end
 
+---@api
 function SonicSD:IsFavorite(id)
     return favorites[id]
 end
 
+---@api
 function SonicSD:RemoveFavorite(id)
     favorites[id] = nil
     self:UpdateFavoritesFile()
 end
 
+---@api
 function SonicSD:ToggleFavorite(id)
     if favorites[id] then
         self:RemoveFavorite(id)

@@ -19,6 +19,7 @@ end
 if SERVER then
     util.AddNetworkString("Sonic-SetLinkedTARDIS")
 
+    ---@api
     function SWEP:MoveTARDIS(ent, callback)
         if IsLegacy(ent) then
             callback(ent:Go(self:GetOwner().tardis_vec, self:GetOwner().tardis_ang))
