@@ -32,6 +32,7 @@ function SWEP:SetSonicID(id)
     self:CallHook("SonicChanged")
 end
 
+---@api
 function SWEP:GetSonicMode()
     return self.mode
 end
@@ -47,6 +48,7 @@ function SWEP:SetSonicMode(mode)
     end
 end
 
+---@api
 ---@return table # always falls back to the `default` entry, never nil
 function SWEP:GetSonic()
     return SonicSD.sonics[self:GetSonicID()] or SonicSD.sonics.default

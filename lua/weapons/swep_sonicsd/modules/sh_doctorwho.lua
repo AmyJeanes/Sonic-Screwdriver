@@ -264,6 +264,8 @@ if SERVER then
         end
     end)
 else
+    ---@api
+    ---@param ent Entity
     function SWEP:PointingAt(ent)
         if not IsValid(ent) then return end
         
