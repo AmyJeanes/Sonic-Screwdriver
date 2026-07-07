@@ -45,12 +45,14 @@ hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
         local comboBox = vgui.Create("DComboBox")
         comboBox:SetText("Model")
         for _,v in pairs(SonicSD.sonics) do
+            ---@cast v sonicsd_sonic_complete
             if not v.IsBase then
                 v.OptionID=comboBox:AddChoice(v.Name,v.ID)
             end
         end
         local selectedmodel=GetConVarString("sonic_model")
         for _,v in pairs(SonicSD.sonics) do
+            ---@cast v sonicsd_sonic_complete
             if not v.IsBase and selectedmodel==v.ID then
                 comboBox:ChooseOptionID(v.OptionID)
             end

@@ -46,10 +46,46 @@ function SonicSD:ToggleFavorite(id)
 end
 
 
+---@class sonicsd_animations
+---@field Mode sonicsd_anim_def?
+---@field Toggle sonicsd_anim_def?
+---@field Active sonicsd_anim_def?
+
+---@class sonicsd_sonic
+---@field ID string
+---@field Base string?
+---@field IsBase boolean?
+---@field Name string?
+---@field ViewModel string?
+---@field WorldModel string?
+---@field LightPos Vector?
+---@field ModeLightPos Vector?
+---@field LightBrightness number?
+---@field LightDisabled boolean?
+---@field ButtonSound boolean?
+---@field SoundLoop string?
+---@field SoundLoop2 string?
+---@field HolsterSound string?
+---@field ButtonDelay number?
+---@field ButtonSoundOn string?
+---@field ButtonSoundOff string?
+---@field ModeSoundOn string?
+---@field ModeSoundOff string?
+---@field DefaultLightColor Color?
+---@field DefaultLightColor2 Color?
+---@field DefaultLightColorOff Color?
+---@field Skin number?
+---@field Animations sonicsd_animations?
+
+---@class sonicsd_sonic_complete : sonicsd_sonic
+---@field OptionID number?
+
+---@type table<string, sonicsd_sonic>
 SonicSD.sonics={}
 ---@api
----@param t table
+---@param t sonicsd_sonic
 function SonicSD:AddSonic(t)
+    ---@type sonicsd_sonic?
     local base = table.Copy(self.sonics[t.Base] or self.sonics.base)
     if base then
         base.IsBase = nil -- not to be inherited
