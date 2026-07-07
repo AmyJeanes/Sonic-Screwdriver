@@ -93,8 +93,6 @@ SWEP.functions={}
 ---@api
 ---@param func function
 function SWEP:AddFunction(func)
-    -- func runs as (self, data); data's shape varies per consumer module, so it stays
-    -- loosely typed as function - a fun(self, data: table) floods every module callback.
     table.insert(self.functions,func)
 end
 

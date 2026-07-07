@@ -50,11 +50,10 @@ function SWEP:DrawWorldModel()
     end
 end
 
--- engine calls this (vm, weapon, ply, flags); only 3 are bound here, so ply/wep below are swapped vs their names
 ---@param vm Entity
----@param ply Weapon
----@param wep Player
-function SWEP:PreDrawViewModel(vm,ply,wep)
+---@param weapon Weapon
+---@param ply Player
+function SWEP:PreDrawViewModel(vm,weapon,ply)
     if self._ready then
         local sonic = self:GetSonic()
         vm:SetModel(sonic.ViewModel)
@@ -63,7 +62,7 @@ function SWEP:PreDrawViewModel(vm,ply,wep)
         end
         local keydown1=LocalPlayer():KeyDown(IN_ATTACK)
         local keydown2=LocalPlayer():KeyDown(IN_ATTACK2)
-        self:CallHook("PreDrawViewModel",vm,ply,wep,keydown1,keydown2)
+        self:CallHook("PreDrawViewModel",vm,weapon,ply,keydown1,keydown2)
     else
         render.SetBlend(0)
     end
