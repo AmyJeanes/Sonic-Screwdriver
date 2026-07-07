@@ -43,6 +43,7 @@ end)
 
 SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
 
+    ---@param sound CSoundPatch?
     local function StopSound(sound)
         if sound and sound:IsPlaying() then
             sound:Stop()
@@ -71,6 +72,8 @@ SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
     if diff.y < 0 then diff.y=-diff.y end
     local pitch=diff.p+diff.y*15
 
+    ---@param sound CSoundPatch
+    ---@param other_sound CSoundPatch
     local function ProcessSound(sound, other_sound)
         sound:ChangePitch(math.Clamp(pitch+100,100,150),0.1)
         self.eyeangles=self:GetOwner():EyeAngles()

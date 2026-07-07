@@ -21,6 +21,10 @@ function SWEP:Initialize()
     self._initqueue={}
 end
 
+---@param ent Entity
+---@param trace TraceResult
+---@param keydown1 boolean
+---@param keydown2 boolean
 function SWEP:Go(ent, trace, keydown1, keydown2)
     if not IsValid(ent) and not ent:IsWorld() then return end
     
@@ -57,6 +61,7 @@ function SWEP:Reload()
     end
 end
 
+---@param ply Player
 function SWEP:InitClient(ply)
     net.Start("SonicSD-Initialize")
         net.WriteEntity(self)

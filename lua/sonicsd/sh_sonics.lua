@@ -16,23 +16,27 @@ function SonicSD:UpdateFavoritesFile()
 end
 
 ---@api
+---@param id string
 function SonicSD:AddFavorite(id)
     favorites[id] = true
     self:UpdateFavoritesFile()
 end
 
 ---@api
+---@param id string
 function SonicSD:IsFavorite(id)
     return favorites[id]
 end
 
 ---@api
+---@param id string
 function SonicSD:RemoveFavorite(id)
     favorites[id] = nil
     self:UpdateFavoritesFile()
 end
 
 ---@api
+---@param id string
 function SonicSD:ToggleFavorite(id)
     if favorites[id] then
         self:RemoveFavorite(id)
@@ -44,6 +48,7 @@ end
 
 SonicSD.sonics={}
 ---@api
+---@param t table
 function SonicSD:AddSonic(t)
     local base = table.Copy(self.sonics[t.Base] or self.sonics.base)
     if base then
@@ -128,6 +133,9 @@ end)
 
 if SERVER then
     ---@api
+    ---@param ply Player
+    ---@param command string?
+    ---@param args table
     function SonicSD:GiveSonic(ply, command, args)
         local sonicID = args[1]
         if not IsValid(ply) then return end

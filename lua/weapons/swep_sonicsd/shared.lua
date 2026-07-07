@@ -12,6 +12,7 @@ function SWEP:GetSonicID()
 end
 
 ---@api
+---@param id string
 function SWEP:SetSonicID(id)
     self.sonicid = id
     local sonic = self:GetSonic()
@@ -40,6 +41,7 @@ function SWEP:GetSonicMode()
 end
 
 ---@api
+---@param mode boolean
 function SWEP:SetSonicMode(mode)
     self.mode = mode
     self:CallHook("ModeChanged", mode)
@@ -89,7 +91,10 @@ SWEP.HoldType = "pistol"
 SWEP.functions={}
 
 ---@api
+---@param func function
 function SWEP:AddFunction(func)
+    -- func runs as (self, data); data's shape varies per consumer module, so it stays
+    -- loosely typed as function - a fun(self, data: table) floods every module callback.
     table.insert(self.functions,func)
 end
 
@@ -97,12 +102,17 @@ SWEP.hooks={}
 
 -- Hook system for modules
 ---@api
+---@param name string
+---@param id string
+---@param func function
 function SWEP:AddHook(name,id,func)
     if not (self.hooks[name]) then self.hooks[name]={} end
     self.hooks[name][id]=func
 end
 
 ---@api
+---@param name string
+---@param id string
 function SWEP:RemoveHook(name,id)
     if self.hooks[name] and self.hooks[name][id] then
         self.hooks[name][id]=nil
@@ -110,6 +120,7 @@ function SWEP:RemoveHook(name,id)
 end
 
 ---@api
+---@param name string
 function SWEP:CallHook(name,...)
     if not self.hooks[name] then return end
     local a,b,c,d,e,f
@@ -122,6 +133,9 @@ function SWEP:CallHook(name,...)
 end
 
 ---@api
+---@param folder string
+---@param addonly boolean?
+---@param noprefix boolean?
 function SWEP:LoadFolder(folder,addonly,noprefix)
     folder="weapons/swep_sonicsd/"..folder.."/"
     local modules = file.Find(folder.."*.lua","LUA")

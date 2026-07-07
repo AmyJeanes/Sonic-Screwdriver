@@ -3,6 +3,9 @@
 ---@class SonicSD
 SonicSD=SonicSD or {}
 ---@api
+---@param folder string?
+---@param addonly boolean?
+---@param noprefix boolean?
 function SonicSD:LoadFolder(folder,addonly,noprefix)
     if folder then
         folder="sonicsd/"..folder.."/"

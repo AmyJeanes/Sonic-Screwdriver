@@ -1,9 +1,14 @@
 -- Doctor Who
 
+---@param ent any
 local function IsLegacy(ent)
     return not ent.TardisExterior
 end
 
+---@param ply Player
+---@param tardis any
+---@param msg string
+---@param error boolean?
 local function TARDIS_MSG(ply, tardis, msg, error)
     if IsLegacy(tardis) then
         ply:ChatPrint(msg)
@@ -20,6 +25,8 @@ if SERVER then
     util.AddNetworkString("Sonic-SetLinkedTARDIS")
 
     ---@api
+    ---@param ent any
+    ---@param callback fun(success: boolean)
     function SWEP:MoveTARDIS(ent, callback)
         if IsLegacy(ent) then
             callback(ent:Go(self:GetOwner().tardis_vec, self:GetOwner().tardis_ang))
@@ -30,6 +37,8 @@ if SERVER then
         self:GetOwner().tardis_ang=nil
     end
 
+    ---@param trace TraceResult
+    ---@param ang Angle
     local function LookAtPlayer(self, trace, ang)
         local hitNormal = trace.HitNormal
         if not hitNormal then return ang end

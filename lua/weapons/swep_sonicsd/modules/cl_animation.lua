@@ -7,6 +7,13 @@
 ---@field target number
 ---@field enabled boolean
 
+---@class sonicsd_anim_def
+---@field Speed number?
+---@field Param string?
+
+---@param name string
+---@param data sonicsd_anim_def
+---@return sonicsd_anim
 function SWEP:SetupAnimation(name, data)
     self.anims[name] = {}
     self.anims[name].speed = data.Speed or 1
@@ -35,16 +42,19 @@ function SWEP:SetupAnimations()
     end
 end
 
+---@param anim sonicsd_anim
+---@param viewModel Entity?
 function SWEP:HandleAnimation(anim, viewModel)
     if anim.enabled and anim.pos ~= anim.target then
         anim.pos = math.Approach(anim.pos, anim.target, FrameTime() * 5 * anim.speed)
     end
-    if self:GetOwner() == LocalPlayer() then
+    if self:GetOwner() == LocalPlayer() and IsValid(viewModel) then
         viewModel:SetPoseParameter(anim.param, anim.pos)
     end
     self:SetPoseParameter(anim.param, anim.pos)
 end
 
+---@param mode boolean
 function SWEP:SetModeAnimation(mode)
     if not self.anims or not self.anims.mode then return end
     if mode then

@@ -1,5 +1,6 @@
 -- Doors
 
+---@param class string
 local function isdoor(class)
     local t={"func_door", "func_door_rotating", "prop_door_rotating"}
     for _,v in pairs(t) do

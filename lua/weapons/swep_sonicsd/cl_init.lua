@@ -32,6 +32,7 @@ function SWEP:OnRemove()
     end
 end
 
+---@param wep Entity
 function SWEP:Holster(wep)
     if self._ready then
         self:CallHook("Holster",wep)
@@ -49,6 +50,10 @@ function SWEP:DrawWorldModel()
     end
 end
 
+-- engine calls this (vm, weapon, ply, flags); only 3 are bound here, so ply/wep below are swapped vs their names
+---@param vm Entity
+---@param ply Weapon
+---@param wep Player
 function SWEP:PreDrawViewModel(vm,ply,wep)
     if self._ready then
         local sonic = self:GetSonic()
@@ -70,6 +75,11 @@ function SWEP:PostDrawViewModel()
     end
 end
 
+---@param x number
+---@param y number
+---@param wide number
+---@param tall number
+---@param alpha number
 function SWEP:DrawWeaponSelection(x,y,wide,tall,alpha)
     y=y+10
     x=x+10
