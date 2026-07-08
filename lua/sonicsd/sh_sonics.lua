@@ -24,8 +24,9 @@ end
 
 ---@api
 ---@param id string
+---@return boolean
 function SonicSD:IsFavorite(id)
-    return favorites[id]
+    return favorites[id] == true
 end
 
 ---@api
