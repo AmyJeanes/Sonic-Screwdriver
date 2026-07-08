@@ -45,7 +45,8 @@ function SWEP:Go(ent, trace, keydown1, keydown2)
     if tool~=nil then
         hooks.cantool = tool
     else
-        hooks.cantool=hook.Call("CanTool", GAMEMODE, self:GetOwner(), self:GetOwner():GetEyeTraceNoCursor(), "")
+        local owner = self:GetOwner() --[[@as Player]]
+        hooks.cantool=hook.Call("CanTool", GAMEMODE, owner, owner:GetEyeTraceNoCursor(), "")
     end
     local class=ent:GetClass()
     self.data = {class=class,ent=ent,hooks=hooks,keydown1=keydown1,keydown2=keydown2,trace=trace}
@@ -129,7 +130,8 @@ function SWEP:Think()
                     self.ent=nil
                     self.data=nil
                 elseif self.done and self.data then
-                    self:CallHook("Hold", self.data)
+                    local holdData = self.data --[[@as table]]
+                    self:CallHook("Hold", holdData)
                 end
             end
         else
