@@ -7,6 +7,7 @@ SWEP.AdminSpawnable = false
 SWEP.UseHands = true
 
 ---@api
+---@return string
 function SWEP:GetSonicID()
     return self.sonicid
 end
@@ -119,6 +120,7 @@ end
 
 ---@api
 ---@param name string
+---@return any
 function SWEP:CallHook(name,...)
     if not self.hooks[name] then return end
     local a,b,c,d,e,f
