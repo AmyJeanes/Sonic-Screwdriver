@@ -1,0 +1,113 @@
+name: Release to Workshop
+
+# Publishes the addon to its production Steam Workshop item on a release-branch
+# deploy. Authenticates as the OWNER (main) Steam account; the Steam Guard code
+# is entered on your phone at run time (never stored). The code round-trips via
+# Home Assistant -> ntfy: this job pings HA, HA prompts your phone, you reply,
+# HA publishes the code to ntfy, and this job reads it back.
+on:
+  push:
+    branches: [release]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Test the code round-trip + Steam login but skip the actual Workshop upload"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-workshop
+  cancel-in-progress: false
+
+env:
+  WORKSHOP_ID: "153825236"
+  NTFY_URL: "https://ntfy.amyjeanes.com"
+  NTFY_TOPIC: "steam-release"
+
+jobs:
+  publish:
+    name: Publish to Steam Workshop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - name: Prepare SteamCMD and build the .gma
+        # All the slow setup happens BEFORE we ask for the code, so the Steam
+        # Guard code is used within seconds of you replying and can't go stale.
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lib32gcc-s1
+          mkdir -p "$HOME/Steam"
+          curl -fsSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar zxf - -C "$HOME/Steam"
+          "$HOME/Steam/steamcmd.sh" +quit >/dev/null 2>&1 || true # bootstrap/self-update so login is instant later
+          curl -fsSL -o /tmp/fastgmad.zip https://github.com/WilliamVenner/fastgmad/releases/download/v0.2.0/fastgmad_linux.zip
+          unzip -oq /tmp/fastgmad.zip -d /tmp/fastgmad
+          chmod +x /tmp/fastgmad/fastgmad
+          mkdir -p /tmp/addon
+          /tmp/fastgmad/fastgmad create -folder . -out /tmp/addon/addon.gma
+
+      - name: Request Steam Guard code via Home Assistant and wait
+        id: guard
+        env:
+          HA_WEBHOOK_URL: ${{ secrets.HA_WEBHOOK_URL }}
+          NTFY_CI_PASSWORD: ${{ secrets.NTFY_CI_PASSWORD }}
+        run: |
+          set -euo pipefail
+          nonce=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n')
+          echo "Prompting your phone (nonce ${nonce})..."
+          curl -fsS -X POST "$HA_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{\"addon\":\"Sonic Screwdriver\",\"sha\":\"${GITHUB_SHA}\",\"nonce\":\"${nonce}\"}"
+          echo "Waiting up to 10 minutes for the Steam Guard code (reply on your phone)..."
+          deadline=$(( $(date +%s) + 600 ))
+          code=""
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            code=$(curl -fsS -u "ci:${NTFY_CI_PASSWORD}" \
+              "${NTFY_URL}/${NTFY_TOPIC}/json?poll=1&since=10m" \
+              | jq -r --arg n "$nonce" 'select(.event=="message") | select(.title==$n) | .message' \
+              | tail -n1 || true)
+            if [ "$code" = "deny" ]; then echo "::error::Release denied on your phone."; exit 1; fi
+            if [ -n "$code" ]; then break; fi
+            sleep 3
+          done
+          if [ -z "$code" ]; then echo "::error::No Steam Guard code received within 10 minutes."; exit 1; fi
+          echo "::add-mask::$code"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Steam Workshop
+        # The secret is scoped to this one step. Split login: consume the code
+        # first (no .gma dependency), then upload with the established session.
+        env:
+          # Main (owner) account - deliberately distinct from the beta CI's
+          # STEAM_USERNAME/STEAM_PASSWORD (test account) so the two never mix.
+          STEAM_USERNAME: ${{ secrets.STEAM_RELEASE_USERNAME }}
+          STEAM_PASSWORD: ${{ secrets.STEAM_RELEASE_PASSWORD }}
+          GUARD_CODE: ${{ steps.guard.outputs.code }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          "$HOME/Steam/steamcmd.sh" +login "$STEAM_USERNAME" "$STEAM_PASSWORD" "$GUARD_CODE" +quit
+          if [ "${DRY_RUN:-false}" = "true" ]; then
+            echo "Dry run: logged in successfully with the code; skipping the Workshop upload."
+            exit 0
+          fi
+          cat > /tmp/addon/addon.vdf <<VDF
+          "workshopitem"
+          {
+            "appid" "4000"
+            "publishedfileid" "${WORKSHOP_ID}"
+            "contentfolder" "/tmp/addon/addon.gma"
+            "changenote" "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          }
+          VDF
+          "$HOME/Steam/steamcmd.sh" +login "$STEAM_USERNAME" +workshop_build_item /tmp/addon/addon.vdf +quit
+
+      - name: Show SteamCMD logs on failure
+        if: failure()
+        run: |
+          echo "::group::workshop_log.txt"; cat "$HOME/Steam/logs/workshop_log.txt" 2>/dev/null || true; echo "::endgroup::"
+          echo "::group::stderr.txt"; cat "$HOME/Steam/logs/stderr.txt" 2>/dev/null || true; echo "::endgroup::"
