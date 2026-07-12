@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: undefined-global, undefined-global-assignment
 SWEP.Category = DEBUG_SONICSD_SPAWNMENU_CATEGORY_OVERRIDE or "Doctor Who - Sonic Tools"
 
 SWEP.Spawnable = false
@@ -5,10 +6,14 @@ SWEP.AdminSpawnable = false
 
 SWEP.UseHands = true
 
+---@api
+---@return string
 function SWEP:GetSonicID()
     return self.sonicid
 end
 
+---@api
+---@param id string
 function SWEP:SetSonicID(id)
     self.sonicid = id
     local sonic = self:GetSonic()
@@ -16,10 +21,10 @@ function SWEP:SetSonicID(id)
         self.ViewModel=sonic.ViewModel
         self.WorldModel=sonic.WorldModel
         self:SetModel(self.WorldModel)
-        if IsValid(self.Owner) then
+        if IsValid(self:GetOwner()) then
             net.Start("SonicSD-Update")
                 net.WriteString(id)
-            net.Send(self.Owner)
+            net.Send(self:GetOwner())
         end
     else
         if file.Exists("materials/vgui/weapons/sonic/"..sonic.ID.."_wepselect.png","GAME") then
@@ -31,10 +36,13 @@ function SWEP:SetSonicID(id)
     self:CallHook("SonicChanged")
 end
 
+---@api
 function SWEP:GetSonicMode()
     return self.mode
 end
 
+---@api
+---@param mode boolean
 function SWEP:SetSonicMode(mode)
     self.mode = mode
     self:CallHook("ModeChanged", mode)
@@ -46,6 +54,8 @@ function SWEP:SetSonicMode(mode)
     end
 end
 
+---@api
+---@return sonicsd_sonic # always falls back to the `default` entry, never nil
 function SWEP:GetSonic()
     return SonicSD.sonics[self:GetSonicID()] or SonicSD.sonics.default
 end
@@ -81,6 +91,8 @@ SWEP.HoldType = "pistol"
 
 SWEP.functions={}
 
+---@api
+---@param func function
 function SWEP:AddFunction(func)
     table.insert(self.functions,func)
 end
@@ -88,21 +100,31 @@ end
 SWEP.hooks={}
 
 -- Hook system for modules
+---@api
+---@param name string
+---@param id string
+---@param func function
 function SWEP:AddHook(name,id,func)
     if not (self.hooks[name]) then self.hooks[name]={} end
     self.hooks[name][id]=func
 end
 
+---@api
+---@param name string
+---@param id string
 function SWEP:RemoveHook(name,id)
     if self.hooks[name] and self.hooks[name][id] then
         self.hooks[name][id]=nil
     end
 end
 
+---@api
+---@param name string
+---@return any
 function SWEP:CallHook(name,...)
     if not self.hooks[name] then return end
     local a,b,c,d,e,f
-    for k,v in pairs(self.hooks[name]) do
+    for _,v in pairs(self.hooks[name]) do
         a,b,c,d,e,f = v(self,...)
         if ( a ~= nil ) then
             return a,b,c,d,e,f
@@ -110,6 +132,10 @@ function SWEP:CallHook(name,...)
     end
 end
 
+---@api
+---@param folder string
+---@param addonly boolean?
+---@param noprefix boolean?
 function SWEP:LoadFolder(folder,addonly,noprefix)
     folder="weapons/swep_sonicsd/"..folder.."/"
     local modules = file.Find(folder.."*.lua","LUA")

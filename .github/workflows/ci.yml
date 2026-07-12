@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+  push:
+    branches:
+      - dev
+      - renovate/*
+  workflow_dispatch:
+
+jobs:
+  glua-check:
+    name: GLua Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          path: Sonic-Screwdriver
+
+      - name: Checkout TARDIS
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          repository: AmyJeanes/TARDIS
+          ref: dev
+          path: TARDIS
+
+      - name: Checkout TARDIS-Legacy
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          repository: AmyJeanes/TARDIS-Legacy
+          ref: dev
+          path: TARDIS-Legacy
+
+      - name: Checkout wire
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          repository: wiremod/wire
+          ref: master
+          path: wire
+
+      - name: Checkout gmod-addon-tools
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          repository: AmyJeanes/gmod-addon-tools
+          # renovate: datasource=github-tags depName=AmyJeanes/gmod-addon-tools
+          ref: v0.21.0
+          path: gmod-addon-tools
+
+      - name: Run glua_check
+        working-directory: Sonic-Screwdriver
+        shell: pwsh
+        run: ./scripts/glua-check.ps1 -Sarif results.sarif
+
+      - name: Upload SARIF
+        if: always() && hashFiles('Sonic-Screwdriver/results.sarif') != ''
+        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
+        with:
+          sarif_file: Sonic-Screwdriver/results.sarif
+          checkout_path: ${{ github.workspace }}/Sonic-Screwdriver
+          category: glua_check

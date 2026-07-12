@@ -43,6 +43,7 @@ end)
 
 SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
 
+    ---@param sound CSoundPatch?
     local function StopSound(sound)
         if sound and sound:IsPlaying() then
             sound:Stop()
@@ -66,14 +67,16 @@ SWEP:AddHook("Think", "sound", function(self,keydown1,keydown2)
 
     self.soundon = true
 
-    local diff=self.Owner:EyeAngles()-self.eyeangles
+    local diff=self:GetOwner():EyeAngles()-self.eyeangles
     if diff.p < 0 then diff.p=-diff.p end
     if diff.y < 0 then diff.y=-diff.y end
     local pitch=diff.p+diff.y*15
 
+    ---@param sound CSoundPatch
+    ---@param other_sound CSoundPatch
     local function ProcessSound(sound, other_sound)
         sound:ChangePitch(math.Clamp(pitch+100,100,150),0.1)
-        self.eyeangles=self.Owner:EyeAngles()
+        self.eyeangles=self:GetOwner():EyeAngles()
         if not self.sound_start and not self.sound_playing then
             if CurTime() > (self.soundon_last or 0) + (self.buttondelay or 0) + 0.5 and not other_sound:IsPlaying() and self.buttonsound then
                 self:EmitSound(self.buttonsoundon)

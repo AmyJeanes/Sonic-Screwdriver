@@ -1,0 +1,17 @@
+{
+    "runtime": {
+        "version": "LuaJIT"
+    },
+    "workspace": {
+        "library": [
+            "./.tools/glua-api",
+            "./.luatypes",
+            "../TARDIS",
+            "../TARDIS-Legacy",
+            "../wire"
+        ],
+        "ignoreGlobs": [
+            ".tools/*.zip"
+        ]
+    }
+}

@@ -32,6 +32,7 @@ function SWEP:OnRemove()
     end
 end
 
+---@param wep Entity
 function SWEP:Holster(wep)
     if self._ready then
         self:CallHook("Holster",wep)
@@ -49,7 +50,10 @@ function SWEP:DrawWorldModel()
     end
 end
 
-function SWEP:PreDrawViewModel(vm,ply,wep)
+---@param vm Entity
+---@param weapon Weapon
+---@param ply Player
+function SWEP:PreDrawViewModel(vm,weapon,ply)
     if self._ready then
         local sonic = self:GetSonic()
         vm:SetModel(sonic.ViewModel)
@@ -58,7 +62,7 @@ function SWEP:PreDrawViewModel(vm,ply,wep)
         end
         local keydown1=LocalPlayer():KeyDown(IN_ATTACK)
         local keydown2=LocalPlayer():KeyDown(IN_ATTACK2)
-        self:CallHook("PreDrawViewModel",vm,ply,wep,keydown1,keydown2)
+        self:CallHook("PreDrawViewModel",vm,weapon,ply,keydown1,keydown2)
     else
         render.SetBlend(0)
     end
@@ -70,6 +74,11 @@ function SWEP:PostDrawViewModel()
     end
 end
 
+---@param x number
+---@param y number
+---@param wide number
+---@param tall number
+---@param alpha number
 function SWEP:DrawWeaponSelection(x,y,wide,tall,alpha)
     y=y+10
     x=x+10

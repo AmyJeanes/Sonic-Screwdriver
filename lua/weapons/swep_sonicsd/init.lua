@@ -21,31 +21,36 @@ function SWEP:Initialize()
     self._initqueue={}
 end
 
+---@param ent Entity
+---@param trace TraceResult
+---@param keydown1 boolean
+---@param keydown2 boolean
 function SWEP:Go(ent, trace, keydown1, keydown2)
     if not IsValid(ent) and not ent:IsWorld() then return end
     
     local hooks={}
-    local use = self:CallHook("CanUse",self.Owner,ent)
+    local use = self:CallHook("CanUse",self:GetOwner(),ent)
     if use~=nil then
         hooks.canuse = use
     else
-        hooks.canuse=hook.Call("PlayerUse", GAMEMODE, self.Owner, ent)
+        hooks.canuse=hook.Call("PlayerUse", GAMEMODE, self:GetOwner(), ent)
     end
-    local move = self:CallHook("CanMove",self.Owner,ent)
+    local move = self:CallHook("CanMove",self:GetOwner(),ent)
     if move~=nil then
         hooks.canmove = move
     else
-        hooks.canmove=hook.Call("PhysgunPickup", GAMEMODE, self.Owner, ent)
+        hooks.canmove=hook.Call("PhysgunPickup", GAMEMODE, self:GetOwner(), ent)
     end
-    local tool = self:CallHook("CanTool",self.Owner,ent)
+    local tool = self:CallHook("CanTool",self:GetOwner(),ent)
     if tool~=nil then
         hooks.cantool = tool
     else
-        hooks.cantool=hook.Call("CanTool", GAMEMODE, self.Owner, self.Owner:GetEyeTraceNoCursor(), "")
+        local owner = self:GetOwner() --[[@as Player]]
+        hooks.cantool=hook.Call("CanTool", GAMEMODE, owner, owner:GetEyeTraceNoCursor(), "")
     end
     local class=ent:GetClass()
     self.data = {class=class,ent=ent,hooks=hooks,keydown1=keydown1,keydown2=keydown2,trace=trace}
-    for k,v in ipairs(self.functions) do
+    for _,v in ipairs(self.functions) do
         v(self,self.data)
     end
 end
@@ -57,6 +62,7 @@ function SWEP:Reload()
     end
 end
 
+---@param ply Player
 function SWEP:InitClient(ply)
     net.Start("SonicSD-Initialize")
         net.WriteEntity(self)
@@ -78,7 +84,7 @@ end)
 
 function SWEP:FirstThink()
     -- Owner only exists now, not in init unfortunately
-    local id=self.Owner:GetInfo("sonic_model","default")
+    local id=self:GetOwner():GetInfo("sonic_model","default")
     self:SetSonicID(id)
     
     self._ready = true
@@ -102,14 +108,14 @@ function SWEP:Think()
     end
     
     if self._ready then
-        local keydown1=self.Owner:KeyDown(IN_ATTACK)
-        local keydown2=self.Owner:KeyDown(IN_ATTACK2)
+        local keydown1=self:GetOwner():KeyDown(IN_ATTACK)
+        local keydown2=self:GetOwner():KeyDown(IN_ATTACK2)
         
         if keydown1 or keydown2 then
-            if (keydown1 and keydown2) and self.Owner.linked_tardis and IsValid(self.Owner.linked_tardis) then
+            if (keydown1 and keydown2) and self:GetOwner().linked_tardis and IsValid(self:GetOwner().linked_tardis) then
                 self.wait=CurTime()+self.WaitTime
             else
-                local trace = util.QuickTrace( self.Owner:GetShootPos(), self.Owner:GetAimVector() * 1000, { self.Owner } )
+                local trace = util.QuickTrace( self:GetOwner():GetShootPos(), self:GetOwner():GetAimVector() * 1000, self:GetOwner() )
                 if not self.ent and not self.wait and trace.Entity then
                     self.ent=trace.Entity
                     self.wait=CurTime()+self.WaitTime
@@ -124,7 +130,8 @@ function SWEP:Think()
                     self.ent=nil
                     self.data=nil
                 elseif self.done and self.data then
-                    self:CallHook("Hold", self.data)
+                    local holdData = self.data --[[@as table]]
+                    self:CallHook("Hold", holdData)
                 end
             end
         else
@@ -138,7 +145,7 @@ function SWEP:Think()
             if CurTime()>self.reloadstart+0.5 and not self.toggled then
                 self.toggled=true
                 self:SetSonicMode(not self:GetSonicMode())
-            elseif not self.Owner:KeyDown(IN_RELOAD) then
+            elseif not self:GetOwner():KeyDown(IN_RELOAD) then
                 self.reloadstart=nil
                 if not self.toggled then
                     self:CallHook("Reload")

@@ -5,7 +5,7 @@ SWEP:AddHook("Initialize", "light", function(self)
     self.rgb = Color(GetConVarNumber("sonic_lightoff_r"), GetConVarNumber("sonic_lightoff_g"), GetConVarNumber("sonic_lightoff_b"))
 end)
 
-SWEP:AddHook("PreDrawViewModel", "light", function(self,vm,ply,wep,keydown1,keydown2)
+SWEP:AddHook("PreDrawViewModel", "light", function(self,vm,weapon,ply,keydown1,keydown2)
     local sonic=self:GetSonic()
     if sonic.LightDisabled then return end
     local cureffect=0

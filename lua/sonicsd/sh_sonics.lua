@@ -15,20 +15,29 @@ function SonicSD:UpdateFavoritesFile()
     file.Write(filename, SonicSD.von.serialize(favorites))
 end
 
+---@api
+---@param id string
 function SonicSD:AddFavorite(id)
     favorites[id] = true
     self:UpdateFavoritesFile()
 end
 
+---@api
+---@param id string
+---@return boolean
 function SonicSD:IsFavorite(id)
-    return favorites[id]
+    return favorites[id] == true
 end
 
+---@api
+---@param id string
 function SonicSD:RemoveFavorite(id)
     favorites[id] = nil
     self:UpdateFavoritesFile()
 end
 
+---@api
+---@param id string
 function SonicSD:ToggleFavorite(id)
     if favorites[id] then
         self:RemoveFavorite(id)
@@ -38,8 +47,46 @@ function SonicSD:ToggleFavorite(id)
 end
 
 
+---@class sonicsd_animations
+---@field Mode sonicsd_anim_def?
+---@field Toggle sonicsd_anim_def?
+---@field Active sonicsd_anim_def?
+
+---@class sonicsd_sonic
+---@field ID string
+---@field Base string?
+---@field IsBase boolean?
+---@field Name string?
+---@field ViewModel string?
+---@field WorldModel string?
+---@field LightPos Vector?
+---@field ModeLightPos Vector?
+---@field LightBrightness number?
+---@field LightDisabled boolean?
+---@field ButtonSound boolean?
+---@field SoundLoop string?
+---@field SoundLoop2 string?
+---@field HolsterSound string?
+---@field ButtonDelay number?
+---@field ButtonSoundOn string?
+---@field ButtonSoundOff string?
+---@field ModeSoundOn string?
+---@field ModeSoundOff string?
+---@field DefaultLightColor Color?
+---@field DefaultLightColor2 Color?
+---@field DefaultLightColorOff Color?
+---@field Skin number?
+---@field Animations sonicsd_animations?
+
+---@class sonicsd_sonic_complete : sonicsd_sonic
+---@field OptionID number?
+
+---@type table<string, sonicsd_sonic>
 SonicSD.sonics={}
+---@api
+---@param t sonicsd_sonic
 function SonicSD:AddSonic(t)
+    ---@type sonicsd_sonic?
     local base = table.Copy(self.sonics[t.Base] or self.sonics.base)
     if base then
         base.IsBase = nil -- not to be inherited
@@ -122,7 +169,12 @@ hook.Add("PostGamemodeLoaded", "sonicsd", function()
 end)
 
 if SERVER then
-    function SonicSD:GiveSonic(ply, command, args)
+    ---@api
+    ---@param ply Player
+    ---@param command string?
+    ---@param args table
+    ---@param noSelect boolean?
+    function SonicSD:GiveSonic(ply, command, args, noSelect)
         local sonicID = args[1]
         if not IsValid(ply) then return end
         if sonicID == nil then return end
@@ -136,23 +188,26 @@ if SERVER then
         if not gamemode.Call("PlayerGiveSWEP", ply, weaponName, swep) then return end
 
         if not ply:HasWeapon(weaponName) then
-            MsgAll("Giving " .. ply:Nick() .. " a " .. weaponName .. " (" .. sonicID .. ")\n")
+            ply:PrintMessage(HUD_PRINTCONSOLE, "Giving " .. ply:Nick() .. " a " .. weaponName .. " (" .. sonicID .. ")\n")
             ply:Give(weaponName)
         end
 
         local sonic = ply:GetWeapon(weaponName)
         sonic:SetSonicID(sonicID)
-        ply:SelectWeapon(weaponName)
+        if not noSelect then
+            ply:SelectWeapon(weaponName)
+        end
     end
     concommand.Add("sonicsd_give", function(ply, command, args)
         SonicSD:GiveSonic(ply, command, args)
     end)
 
     hook.Add("PlayerLoadout", "sonicsd", function(ply)
-        if tobool(ply:GetInfoNum("sonic_give_on_spawn",0)) then
-            local id=ply:GetInfo("sonic_model","default")
-            SonicSD:GiveSonic(ply, nil, {id})
-        end
+        if not tobool(ply:GetInfoNum("sonic_give_on_spawn", 0)) then return end
+        local id = ply:GetInfo("sonic_model")
+        timer.Simple(0, function()
+            if IsValid(ply) then SonicSD:GiveSonic(ply, nil, {id}, true) end
+        end)
     end)
 end
 
