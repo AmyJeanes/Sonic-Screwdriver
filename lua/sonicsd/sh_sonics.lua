@@ -173,7 +173,8 @@ if SERVER then
     ---@param ply Player
     ---@param command string?
     ---@param args table
-    function SonicSD:GiveSonic(ply, command, args)
+    ---@param noSelect boolean?
+    function SonicSD:GiveSonic(ply, command, args, noSelect)
         local sonicID = args[1]
         if not IsValid(ply) then return end
         if sonicID == nil then return end
@@ -187,23 +188,26 @@ if SERVER then
         if not gamemode.Call("PlayerGiveSWEP", ply, weaponName, swep) then return end
 
         if not ply:HasWeapon(weaponName) then
-            MsgAll("Giving " .. ply:Nick() .. " a " .. weaponName .. " (" .. sonicID .. ")\n")
+            ply:PrintMessage(HUD_PRINTCONSOLE, "Giving " .. ply:Nick() .. " a " .. weaponName .. " (" .. sonicID .. ")\n")
             ply:Give(weaponName)
         end
 
         local sonic = ply:GetWeapon(weaponName)
         sonic:SetSonicID(sonicID)
-        ply:SelectWeapon(weaponName)
+        if not noSelect then
+            ply:SelectWeapon(weaponName)
+        end
     end
     concommand.Add("sonicsd_give", function(ply, command, args)
         SonicSD:GiveSonic(ply, command, args)
     end)
 
     hook.Add("PlayerLoadout", "sonicsd", function(ply)
-        if tobool(ply:GetInfoNum("sonic_give_on_spawn",0)) then
-            local id=ply:GetInfo("sonic_model")
-            SonicSD:GiveSonic(ply, nil, {id})
-        end
+        if not tobool(ply:GetInfoNum("sonic_give_on_spawn", 0)) then return end
+        local id = ply:GetInfo("sonic_model")
+        timer.Simple(0, function()
+            if IsValid(ply) then SonicSD:GiveSonic(ply, nil, {id}, true) end
+        end)
     end)
 end
 
