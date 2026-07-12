@@ -60,6 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           nonce=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n')
+          echo "nonce=$nonce" >> "$GITHUB_OUTPUT"
           echo "Prompting your phone (nonce ${nonce})..."
           curl -fsS -X POST "$HA_WEBHOOK_URL" \
             -H 'Content-Type: application/json' \
@@ -113,3 +114,14 @@ jobs:
         run: |
           echo "::group::workshop_log.txt"; cat "$HOME/Steam/logs/workshop_log.txt" 2>/dev/null || true; echo "::endgroup::"
           echo "::group::stderr.txt"; cat "$HOME/Steam/logs/stderr.txt" 2>/dev/null || true; echo "::endgroup::"
+
+      - name: Report result to Home Assistant
+        # Update the phone notification (same tag) with the outcome, so the prompt
+        # is replaced by a success/failure notification instead of lingering.
+        if: always() && steps.guard.outputs.nonce != ''
+        env:
+          HA_WEBHOOK_URL: ${{ secrets.HA_WEBHOOK_URL }}
+        run: |
+          curl -fsS -X POST "$HA_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{\"phase\":\"result\",\"addon\":\"Sonic Screwdriver\",\"nonce\":\"${{ steps.guard.outputs.nonce }}\",\"status\":\"${{ job.status }}\"}" || true
