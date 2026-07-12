@@ -26,6 +26,8 @@ env:
   WORKSHOP_ID: "153825236"
   NTFY_URL: "https://ntfy.amyjeanes.com"
   NTFY_TOPIC: "steam-release"
+  # renovate: datasource=github-releases depName=WilliamVenner/fastgmad
+  FASTGMAD_VERSION: "v0.2.0"
 
 jobs:
   publish:
@@ -44,7 +46,7 @@ jobs:
           mkdir -p "$HOME/Steam"
           curl -fsSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar zxf - -C "$HOME/Steam"
           "$HOME/Steam/steamcmd.sh" +quit >/dev/null 2>&1 || true # bootstrap/self-update so login is instant later
-          curl -fsSL -o /tmp/fastgmad.zip https://github.com/WilliamVenner/fastgmad/releases/download/v0.2.0/fastgmad_linux.zip
+          curl -fsSL -o /tmp/fastgmad.zip "https://github.com/WilliamVenner/fastgmad/releases/download/${FASTGMAD_VERSION}/fastgmad_linux.zip"
           unzip -oq /tmp/fastgmad.zip -d /tmp/fastgmad
           chmod +x /tmp/fastgmad/fastgmad
           mkdir -p /tmp/addon
