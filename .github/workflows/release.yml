@@ -1,6 +1,5 @@
 name: Release to Workshop
 
-# Production release: publishes to the Workshop via the shared reusable workflow (mfa flow).
 on:
   push:
     branches: [release]
