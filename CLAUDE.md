@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Garry's Mod (Lua) addon shipping the `swep_sonicsd` SWEP — a Sonic Screwdriver tool from Doctor Who. The weapon traces forward, classifies whatever it hits by entity class or `data.ent.*` field, and dispatches to one of many *function* modules (`SWEP:AddFunction`) that interact with that thing: doors, buttons, NPCs, vehicles, props, Wire keypads, TARDIS exteriors, etc.
 
-Loaded in-place at `garrysmod/addons/Sonic-Screwdriver/`. No `addon.json` workflow, no CI, no build step.
+Loaded in-place at `garrysmod/addons/Sonic-Screwdriver/` — GMod loads the `lua/` tree at server start, so there's no local build step. CI runs `glua_check` + typing checks on push/PR, and the addon publishes to the Steam Workshop automatically (see Build / publish below).
 
 There is also a `SonicSD.*` namespace defined in `lua/autorun/sonicsd.lua` that loads supporting files from `lua/sonicsd/`. The `SonicSD:AddSonic` table-driven registry decides which sonic models, sounds, lights and animations are available; each entry becomes a separate `Weapon` list entry (`sonicsd-<id>`) and shows up in the Spawnmenu under "Doctor Who - Sonic Tools".
 
@@ -93,6 +93,17 @@ Patterns that matter for this codebase:
 - **`self.Owner` vs `self:GetOwner()`**. The stub marks `SWEP.Owner` `@deprecated`. Replacing field accesses with the method call is the supported fix; `self:GetOwner()` returns a `Player` (or `Entity?` if unequipped). When using it for many subsequent calls, capture once: `local owner = self:GetOwner()`.
 - **Trace filter shape (`{ self:GetOwner() }`)**. `util.QuickTrace`'s third arg is `Entity | Entity[]`. An inline `{ owner }` literal occasionally fails to unify with `Entity[]` because the analyzer narrows the element type and won't widen back. Pass the `owner` Entity directly when the filter is a single entity.
 - **Project-specific globals** (e.g. `DEBUG_SONICSD_SPAWNMENU_CATEGORY_OVERRIDE`, used once at the top of `swep_sonicsd/shared.lua` as a debug knob). Annotate them with `---@diagnostic disable-next-line: undefined-global` directly above the use site rather than carrying a `.luatypes/` stub — they belong with the code that reads them, not in a glua-api override layer.
+
+## Build / publish
+
+No local build step — GMod loads `lua/` in place. CI publishes the addon to two Steam Workshop items via the shared `gmod-addon-tools/publish-workshop.yml` reusable workflow:
+
+- **Beta (`3764756778`)** — every push to `main` (after GLua Check passes) republishes the beta item from `ci.yml`'s `publish` job: silent login, `mfa: false`. This is the "latest `main`" channel.
+- **Stable (`153825236`)** — publishing a full GitHub **release** fires `release.yml`, which publishes the stable item behind a phone-gated Steam Guard prompt (`mfa: true`). A **bare tag ships nothing** (the trigger is `release: published`, not the tag) — cut a release to publish stable.
+
+**Change notes.** The Steam note is composed from the release body: the **first paragraph** of a `## Summary` section becomes the note (Steam is BBCode, not Markdown — keep it plain prose), under an automatic version link. Beta builds and dry runs get a commit link instead. Draft releases from `RELEASE_TEMPLATE.md` (matches the TARDIS/world-portals note structure).
+
+Test without shipping via `release.yml`'s `workflow_dispatch`: `dry_run: true` (real pack + Steam login, skip upload) or `tag: <version>` (preview — log the composed note only, no login).
 
 <!-- >>> GENERATED shared conventions (gmod-addon-tools) - do not edit; regen: scripts/generate-claude-md.ps1 >>> -->
 
