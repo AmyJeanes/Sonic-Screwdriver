@@ -9,6 +9,10 @@ on:
       - dev
       - renovate/*
   workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        description: Publish to the beta workshop item
 
 jobs:
   glua-check:
@@ -64,3 +68,18 @@ jobs:
           sarif_file: Sonic-Screwdriver/results.sarif
           checkout_path: ${{ github.workspace }}/Sonic-Screwdriver
           category: glua_check
+
+  publish:
+    name: Publish to beta workshop
+    needs: glua-check
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || github.event.inputs.publish == 'true'
+    uses: AmyJeanes/gmod-addon-tools/.github/workflows/publish-workshop.yml@e8dfb52f083956804d3208efbbeb92cd651efaf2 # v0.25.0
+    with:
+      addon: "Sonic Screwdriver"
+      workshop_id: ${{ vars.BETA_WORKSHOP_ID }}
+      mfa: false
+      dry_run: ${{ vars.BETA_WORKSHOP_ID == '' }}
+    secrets:
+      STEAM_USERNAME: ${{ vars.STEAM_USERNAME }}
+      STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
+      HA_WEBHOOK_URL: ${{ secrets.HA_WEBHOOK_URL }}
