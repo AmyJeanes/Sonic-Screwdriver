@@ -23,33 +23,33 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           path: Sonic-Screwdriver
 
       - name: Checkout TARDIS
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: AmyJeanes/TARDIS
           ref: main
           path: TARDIS
 
       - name: Checkout TARDIS-Legacy
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: AmyJeanes/TARDIS-Legacy
           ref: dev
           path: TARDIS-Legacy
 
       - name: Checkout wire
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: wiremod/wire
           ref: master
           path: wire
 
       - name: Checkout gmod-addon-tools
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: AmyJeanes/gmod-addon-tools
           # renovate: datasource=github-tags depName=AmyJeanes/gmod-addon-tools
