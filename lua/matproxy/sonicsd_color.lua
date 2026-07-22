@@ -9,6 +9,10 @@ matproxy.Add(
 
     end,
 
+    -- The engine passes the IMaterial itself, not the material-name string the annotation claims.
+    ---@param self table
+    ---@param mat IMaterial
+    ---@param ent Entity?
     bind    =   function( self, mat, ent )
 
         if not IsValid( ent ) then return end
@@ -57,6 +61,9 @@ matproxy.Add(
 
     end,
 
+    ---@param self table
+    ---@param mat IMaterial
+    ---@param ent Entity?
     bind    =   function( self, mat, ent )
 
         if not IsValid( ent ) then return end
@@ -81,6 +88,9 @@ matproxy.Add(
 
     end,
 
+    ---@param self table
+    ---@param mat IMaterial
+    ---@param ent Entity?
     bind    =   function( self, mat, ent )
 
         if not IsValid( ent ) then return end
@@ -105,6 +115,9 @@ matproxy.Add(
 
     end,
 
+    ---@param self table
+    ---@param mat IMaterial
+    ---@param ent Entity?
     bind    =   function( self, mat, ent )
 
         if not IsValid( ent ) then return end
@@ -129,6 +142,9 @@ matproxy.Add(
 
     end,
 
+    ---@param self table
+    ---@param mat IMaterial
+    ---@param ent Entity?
     bind    =   function( self, mat, ent )
 
         if not IsValid( ent ) then return end
