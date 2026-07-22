@@ -69,9 +69,52 @@ jobs:
           checkout_path: ${{ github.workspace }}/Sonic-Screwdriver
           category: glua_check
 
+  typing-check:
+    name: Typing Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          path: Sonic-Screwdriver
+
+      - name: Checkout TARDIS
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: AmyJeanes/TARDIS
+          ref: main
+          path: TARDIS
+
+      - name: Checkout TARDIS-Legacy
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: AmyJeanes/TARDIS-Legacy
+          ref: dev
+          path: TARDIS-Legacy
+
+      - name: Checkout wire
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: wiremod/wire
+          ref: master
+          path: wire
+
+      - name: Checkout gmod-addon-tools
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: AmyJeanes/gmod-addon-tools
+          # renovate: datasource=github-tags depName=AmyJeanes/gmod-addon-tools
+          ref: v0.28.1
+          path: gmod-addon-tools
+
+      - name: Run typing check
+        working-directory: Sonic-Screwdriver
+        shell: pwsh
+        run: ./scripts/typing-check.ps1
+
   publish:
     name: Publish to beta workshop
-    needs: glua-check
+    needs: [glua-check, typing-check]
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.publish == 'true'
     uses: AmyJeanes/gmod-addon-tools/.github/workflows/publish-workshop.yml@971c227d02b3886fd245373f9c5d6622b21d424c # v0.27.0
     with:
