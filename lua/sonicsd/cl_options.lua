@@ -36,8 +36,8 @@ end)
 
 hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
     spawnmenu.AddToolMenuOption("Options", "Doctor Who", "Sonic_Options", "Sonic Screwdriver", "", "", function(panel)
-        -- The menu hands us a ControlPanel, not the bare Panel the stub's annotation claims.
-        -- Fixed on the wiki (2026-07-24); removable once the annotations re-scrape it.
+        -- glua_ls 1.1.1 (wiki): the menu hands us a ControlPanel, not the bare Panel the stub
+        -- claims. Fixed on the wiki 2026-07-24; removable once the annotations re-scrape.
         ---@cast panel ControlPanel
         panel:ClearControls()
 
