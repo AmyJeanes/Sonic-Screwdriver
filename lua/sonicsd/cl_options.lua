@@ -27,7 +27,7 @@ cvars.AddChangeCallback("sonic_model", function(convar_name, old, selected)
     net.Start("SonicSD-Update")
         net.WriteString(selected)
     net.SendToServer()
-    local weapon = LocalPlayer():GetWeapon("swep_sonicsd")
+    local weapon = LocalPlayer():GetWeapon("swep_sonicsd") --[[@as swep_sonicsd]]
     if IsValid(weapon) then
         weapon:SetSonicID(selected)
         weapon:CallHook("SonicChanged")
@@ -36,6 +36,9 @@ end)
 
 hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
     spawnmenu.AddToolMenuOption("Options", "Doctor Who", "Sonic_Options", "Sonic Screwdriver", "", "", function(panel)
+        -- The menu hands us a ControlPanel, not the bare Panel the stub's annotation claims.
+        -- Fixed on the wiki (2026-07-24); removable once the annotations re-scrape it.
+        ---@cast panel ControlPanel
         panel:ClearControls()
 
         local DLabel1 = vgui.Create( "DLabel" )
@@ -114,7 +117,7 @@ hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
         for _,v in pairs(checkbox_options) do
             local checkBox = vgui.Create( "DCheckBoxLabel" )
             checkBox:SetText( v[1] )
-            checkBox:SetValue( GetConVar(v[2]):GetBool() )
+            checkBox:SetValue( assert(GetConVar(v[2])):GetBool() )
             checkBox:SetConVar( v[2] )
             panel:AddItem(checkBox)
             table.insert(checkboxes, checkBox)

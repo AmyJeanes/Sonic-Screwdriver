@@ -192,7 +192,7 @@ if SERVER then
             ply:Give(weaponName)
         end
 
-        local sonic = ply:GetWeapon(weaponName)
+        local sonic = ply:GetWeapon(weaponName) --[[@as swep_sonicsd]]
         sonic:SetSonicID(sonicID)
         if not noSelect then
             ply:SelectWeapon(weaponName)

@@ -37,6 +37,7 @@ function SWEP:SetSonicID(id)
 end
 
 ---@api
+---@return boolean
 function SWEP:GetSonicMode()
     return self.mode
 end

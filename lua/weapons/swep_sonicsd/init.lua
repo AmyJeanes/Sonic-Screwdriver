@@ -26,7 +26,7 @@ end
 ---@param keydown1 boolean
 ---@param keydown2 boolean
 function SWEP:Go(ent, trace, keydown1, keydown2)
-    if not IsValid(ent) and not ent:IsWorld() then return end
+    if not IsValid(ent) and ent ~= game.GetWorld() then return end
     
     local hooks={}
     local use = self:CallHook("CanUse",self:GetOwner(),ent)
@@ -84,7 +84,8 @@ end)
 
 function SWEP:FirstThink()
     -- Owner only exists now, not in init unfortunately
-    local id=self:GetOwner():GetInfo("sonic_model","default")
+    local owner = self:GetOwner() --[[@as Player]]
+    local id=owner:GetInfo("sonic_model")
     self:SetSonicID(id)
     
     self._ready = true
@@ -108,14 +109,15 @@ function SWEP:Think()
     end
     
     if self._ready then
-        local keydown1=self:GetOwner():KeyDown(IN_ATTACK)
-        local keydown2=self:GetOwner():KeyDown(IN_ATTACK2)
-        
+        local owner = self:GetOwner() --[[@as Player]]
+        local keydown1=owner:KeyDown(IN_ATTACK)
+        local keydown2=owner:KeyDown(IN_ATTACK2)
+
         if keydown1 or keydown2 then
-            if (keydown1 and keydown2) and self:GetOwner().linked_tardis and IsValid(self:GetOwner().linked_tardis) then
+            if (keydown1 and keydown2) and owner.linked_tardis and IsValid(owner.linked_tardis) then
                 self.wait=CurTime()+self.WaitTime
             else
-                local trace = util.QuickTrace( self:GetOwner():GetShootPos(), self:GetOwner():GetAimVector() * 1000, self:GetOwner() )
+                local trace = util.QuickTrace( owner:GetShootPos(), owner:GetAimVector() * 1000, owner )
                 if not self.ent and not self.wait and trace.Entity then
                     self.ent=trace.Entity
                     self.wait=CurTime()+self.WaitTime
@@ -145,7 +147,7 @@ function SWEP:Think()
             if CurTime()>self.reloadstart+0.5 and not self.toggled then
                 self.toggled=true
                 self:SetSonicMode(not self:GetSonicMode())
-            elseif not self:GetOwner():KeyDown(IN_RELOAD) then
+            elseif not owner:KeyDown(IN_RELOAD) then
                 self.reloadstart=nil
                 if not self.toggled then
                     self:CallHook("Reload")

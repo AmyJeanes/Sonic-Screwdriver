@@ -165,6 +165,7 @@ if SERVER then
 
     SWEP:AddFunction(function(self,data)
         if (data.class=="sent_tardis" or data.class=="sent_tardis_interior" or data.class=="gmod_tardis" or data.class=="gmod_tardis_interior") and data.hooks.cantool then
+            ---@type Entity
             local e
             if data.class=="sent_tardis_interior" then
                 e=data.ent.tardis
@@ -279,7 +280,8 @@ else
     function SWEP:PointingAt(ent)
         if not IsValid(ent) then return end
         
-        local ViewEnt = self:GetOwner():GetViewEntity()
+        local owner = self:GetOwner() --[[@as Player]]
+        local ViewEnt = owner:GetViewEntity()
         local fov = 20
         local Disp = ent:GetPos() - ViewEnt:GetPos()
         local Dist = Disp:Length()
@@ -288,7 +290,7 @@ else
         local MaxCos = math.abs( math.cos( math.acos( Dist / math.sqrt( Dist * Dist + Width * Width ) ) + fov * ( math.pi / 180 ) ) )
         Disp:Normalize()
         local dot=Disp:Dot( ViewEnt:EyeAngles():Forward() )
-        local tr=self:GetOwner():GetEyeTraceNoCursor()
+        local tr=owner:GetEyeTraceNoCursor()
         
         if IsValid(tr.Entity) and tr.Entity==ent then
             return 0.25

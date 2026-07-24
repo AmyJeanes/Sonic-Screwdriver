@@ -53,21 +53,22 @@ SWEP:AddHook("PreDrawViewModel", "light", function(self,vm,weapon,ply,keydown1,k
 end)
 
 SWEP:AddHook("SonicChanged", "default-color", function(self)
-    if GetConVar("sonic_should_set_default_colors"):GetBool() then
+    -- Our own client convars from cl_options.lua, so a missing one is a bug, not a state to handle.
+    if assert(GetConVar("sonic_should_set_default_colors")):GetBool() then
         local son = self:GetSonic()
         if son ~= nil and son.DefaultLightColor ~= nil then
             local default = son.DefaultLightColor
             local default2 = son.DefaultLightColor2 or default
             local defaultd = son.DefaultLightColorOff or default
-            GetConVar("sonic_light_r"):SetInt(default.r)
-            GetConVar("sonic_light_g"):SetInt(default.g)
-            GetConVar("sonic_light_b"):SetInt(default.b)
-            GetConVar("sonic_light2_r"):SetInt(default2.r)
-            GetConVar("sonic_light2_g"):SetInt(default2.g)
-            GetConVar("sonic_light2_b"):SetInt(default2.b)
-            GetConVar("sonic_lightoff_r"):SetInt(defaultd.r)
-            GetConVar("sonic_lightoff_g"):SetInt(defaultd.g)
-            GetConVar("sonic_lightoff_b"):SetInt(defaultd.b)
+            assert(GetConVar("sonic_light_r")):SetInt(default.r)
+            assert(GetConVar("sonic_light_g")):SetInt(default.g)
+            assert(GetConVar("sonic_light_b")):SetInt(default.b)
+            assert(GetConVar("sonic_light2_r")):SetInt(default2.r)
+            assert(GetConVar("sonic_light2_g")):SetInt(default2.g)
+            assert(GetConVar("sonic_light2_b")):SetInt(default2.b)
+            assert(GetConVar("sonic_lightoff_r")):SetInt(defaultd.r)
+            assert(GetConVar("sonic_lightoff_g")):SetInt(defaultd.g)
+            assert(GetConVar("sonic_lightoff_b")):SetInt(defaultd.b)
         end
     end
 end)
