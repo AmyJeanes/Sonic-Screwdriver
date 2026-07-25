@@ -6,12 +6,16 @@
         "library": [
             "./.tools/glua-api",
             "./.luatypes",
-            "../TARDIS",
+            "../TARDIS/lua",
+            "../TARDIS/.luatypes",
             "../TARDIS-Legacy",
             "../wire"
         ],
         "ignoreGlobs": [
             ".tools/*.zip"
         ]
+    },
+    "diagnostics": {
+        "disable": []
     }
 }
