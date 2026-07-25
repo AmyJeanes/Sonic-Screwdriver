@@ -19,7 +19,6 @@ matproxy.Add(
 
         local owner = ent:GetOwner();
         if not (IsValid(owner) and owner:IsPlayer()) then return end
-        -- but not under whole-workspace load, so the cast stays until that is fixed.
 
         local col1 = Vector(GetConVarNumber("sonic_light_r")/255, GetConVarNumber("sonic_light_g")/255, GetConVarNumber("sonic_light_b")/255)
         local col2 = Vector(GetConVarNumber("sonic_light2_r")/255, GetConVarNumber("sonic_light2_g")/255, GetConVarNumber("sonic_light2_b")/255)
@@ -152,7 +151,6 @@ matproxy.Add(
 
         local owner = ent:GetOwner();
         if not (IsValid(owner) and owner:IsPlayer()) then return end
-        -- but not under whole-workspace load, so the cast stays until that is fixed.
 
         local keydown1=owner:KeyDown(IN_ATTACK)
         local keydown2=owner:KeyDown(IN_ATTACK2)
