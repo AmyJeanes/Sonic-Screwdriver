@@ -8,8 +8,7 @@
             "./.tools/glua-api",
             "../TARDIS/lua",
             "../TARDIS/.luatypes",
-            "../TARDIS-Legacy",
-            "../wire"
+            "../TARDIS-Legacy"
         ],
         "ignoreGlobs": [
             ".tools/*.zip"

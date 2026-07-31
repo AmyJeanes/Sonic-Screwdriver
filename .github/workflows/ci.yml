@@ -41,13 +41,6 @@ jobs:
           ref: dev
           path: TARDIS-Legacy
 
-      - name: Checkout wire
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          repository: wiremod/wire
-          ref: master
-          path: wire
-
       - name: Checkout gmod-addon-tools
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -91,13 +84,6 @@ jobs:
           repository: AmyJeanes/TARDIS-Legacy
           ref: dev
           path: TARDIS-Legacy
-
-      - name: Checkout wire
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          repository: wiremod/wire
-          ref: master
-          path: wire
 
       - name: Checkout gmod-addon-tools
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

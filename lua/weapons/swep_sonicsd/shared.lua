@@ -72,7 +72,7 @@ net.Receive("SonicSD-Update",function(len,ply)
 end)
 
 net.Receive("SonicSD-ModeChanged",function(len,ply)
-    local weapon = net.ReadEntity()
+    local weapon = net.ReadEntity() --[[@as swep_sonicsd]]
     local mode = net.ReadBool()
     if IsValid(weapon) then
         weapon:SetSonicMode(mode)
