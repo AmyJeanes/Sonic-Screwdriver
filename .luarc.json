@@ -4,8 +4,8 @@
     },
     "workspace": {
         "library": [
-            "./.tools/glua-api",
             "./.luatypes",
+            "./.tools/glua-api",
             "../TARDIS/lua",
             "../TARDIS/.luatypes",
             "../TARDIS-Legacy",
