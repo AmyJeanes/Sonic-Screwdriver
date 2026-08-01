@@ -21,6 +21,18 @@ function SWEP:Initialize()
     self._initqueue={}
 end
 
+---What a sonic function receives about the thing being sonicked.
+---@class sonicsd_use
+---@field class string
+---@field ent Entity
+---@field hooks table<string, any>
+---@field keydown1 boolean
+---@field keydown2 boolean
+---@field trace TraceResult
+
+---@class swep_sonicsd
+---@field data sonicsd_use? cleared between uses, so nil whenever nothing is being sonicked
+
 ---@param ent Entity
 ---@param trace TraceResult
 ---@param keydown1 boolean
@@ -132,8 +144,7 @@ function SWEP:Think()
                     self.ent=nil
                     self.data=nil
                 elseif self.done and self.data then
-                    local holdData = self.data --[[@as table]]
-                    self:CallHook("Hold", holdData)
+                    self:CallHook("Hold", self.data)
                 end
             end
         else

@@ -51,6 +51,7 @@ hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
         end
         local selectedmodel=GetConVarString("sonic_model")
         for _,v in pairs(SonicSD.sonics) do
+            -- Use the runtime type, not the authored one.
             ---@cast v sonicsd_sonic_complete
             if not v.IsBase and selectedmodel==v.ID then
                 comboBox:ChooseOptionID(v.OptionID)

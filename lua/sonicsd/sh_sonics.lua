@@ -86,7 +86,6 @@ SonicSD.sonics={}
 ---@api
 ---@param t sonicsd_sonic
 function SonicSD:AddSonic(t)
-    ---@type sonicsd_sonic?
     local base = table.Copy(self.sonics[t.Base] or self.sonics.base)
     if base then
         base.IsBase = nil -- not to be inherited
