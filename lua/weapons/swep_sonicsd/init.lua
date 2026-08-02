@@ -6,6 +6,7 @@ SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.WaitTime = 0.5
+SWEP.Range = 1000
 
 util.AddNetworkString("SonicSD-Initialize")
 util.AddNetworkString("SonicSD-Update")
@@ -39,7 +40,10 @@ end
 ---@param keydown2 boolean
 function SWEP:Go(ent, trace, keydown1, keydown2)
     if not IsValid(ent) and ent ~= game.GetWorld() then return end
-    
+
+    local retarget = self:CallHook("ResolveTarget", ent, trace)
+    if IsValid(retarget) then ent = retarget end
+
     local hooks={}
     local use = self:CallHook("CanUse",self:GetOwner(),ent)
     if use~=nil then
@@ -57,8 +61,7 @@ function SWEP:Go(ent, trace, keydown1, keydown2)
     if tool~=nil then
         hooks.cantool = tool
     else
-        local owner = self:GetOwner() --[[@as Player]]
-        hooks.cantool=hook.Call("CanTool", GAMEMODE, owner, owner:GetEyeTraceNoCursor(), "")
+        hooks.cantool=hook.Call("CanTool", GAMEMODE, self:GetOwner() --[[@as Player]], trace, "")
     end
     local class=ent:GetClass()
     self.data = {class=class,ent=ent,hooks=hooks,keydown1=keydown1,keydown2=keydown2,trace=trace}
@@ -129,7 +132,7 @@ function SWEP:Think()
             if (keydown1 and keydown2) and owner.linked_tardis and IsValid(owner.linked_tardis) then
                 self.wait=CurTime()+self.WaitTime
             else
-                local trace = util.QuickTrace( owner:GetShootPos(), owner:GetAimVector() * 1000, owner )
+                local trace = util.QuickTrace( owner:GetShootPos(), owner:GetAimVector() * self.Range, owner )
                 if not self.ent and not self.wait and trace.Entity then
                     self.ent=trace.Entity
                     self.wait=CurTime()+self.WaitTime

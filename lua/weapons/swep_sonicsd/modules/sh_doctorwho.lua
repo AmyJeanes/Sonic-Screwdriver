@@ -24,6 +24,27 @@ end
 if SERVER then
     util.AddNetworkString("Sonic-SetLinkedTARDIS")
 
+    -- Traces through TARDIS door portals are redirected to the exterior instead of going through them
+    ---@param self swep_sonicsd
+    ---@param ent Entity
+    ---@param trace TraceResult
+    ---@return Entity?
+    SWEP:AddHook("ResolveTarget", "doctorwho", function(self, ent, trace)
+        if ent.TardisPart and ent.ID == "door" and IsValid(ent.exterior) then
+            return ent.exterior
+        end
+
+        local portal = trace.WorldPortal
+        if not IsValid(portal) then return end
+        local parent = portal:GetParent()
+        if not IsValid(parent) then return end
+        local interior = parent.TardisExterior and parent.interior or parent
+        if not (IsValid(interior) and interior.portals) then return end
+        if portal == interior.portals.interior or portal == interior.portals.exterior then
+            return interior.exterior
+        end
+    end)
+
     ---@api
     ---@param ent any
     ---@param callback fun(success: boolean)
