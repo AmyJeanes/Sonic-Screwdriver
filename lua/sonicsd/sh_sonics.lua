@@ -129,7 +129,7 @@ hook.Add("PostGamemodeLoaded", "sonicsd", function()
         if not obj.spawnname then return end
 
         local icon = vgui.Create("ContentIcon", container)
-        icon:SetContentType("weapon")
+        icon:SetContentType("sonicsd")
         icon:SetSpawnName(obj.spawnname)
         icon:SetName(obj.nicename)
         icon:SetMaterial(obj.material)
@@ -154,6 +154,18 @@ hook.Add("PostGamemodeLoaded", "sonicsd", function()
                 local fav_text = fav and "Remove from" or "Add to"
                 self:SetIcon("icon16/" .. fav_icon)
                 self:SetText(fav_text .. " favorites (reload required)")
+            end
+
+            -- Show Delete button when the icon is in a custom spawnmenu list
+            local parent = self:GetParent()
+            if not IsValid(parent) or not parent.GetReadOnly or not parent:GetReadOnly() then
+                dmenu:AddSpacer()
+                local delete = dmenu:AddOption("#spawnmenu.menu.delete", function()
+                    if not IsValid(self) then return end
+                    self:Remove()
+                    hook.Run("SpawnlistContentChanged")
+                end)
+                delete:SetIcon("icon16/bin_closed.png")
             end
 
             dmenu:Open()
