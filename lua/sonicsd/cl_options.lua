@@ -37,10 +37,7 @@ end)
 hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
     spawnmenu.AddToolMenuOption("Options", "Doctor Who", "Sonic_Options", "Sonic Screwdriver", "", "", function(panel)
         panel:ClearControls()
-
-        local DLabel1 = vgui.Create( "DLabel" )
-        DLabel1:SetText( "Sonic Screwdriver" )
-        panel:AddItem(DLabel1)
+        panel:Help("Sonic Screwdriver")
 
         local comboBox = vgui.Create("DComboBox")
         comboBox:SetText("Model")
@@ -62,62 +59,30 @@ hook.Add("PopulateToolMenu", "SonicSD-PopulateToolMenu", function()
         end
         panel:AddItem(comboBox)
 
-        local DLabel2 = vgui.Create( "DLabel" )
-        DLabel2:SetText( "Primary color" )
-        panel:AddItem(DLabel2)
+        ---@param label string
+        ---@param r_convar string
+        ---@param g_convar string
+        ---@param b_convar string
+        local function addColorMixer(label, r_convar, g_convar, b_convar)
+            panel:Help(label)
 
-        local Mixer1 = vgui.Create( "DColorMixer" )
-        Mixer1:SetPalette( true )       --Show/hide the palette         DEF:true
-        Mixer1:SetAlphaBar( false )         --Show/hide the alpha bar       DEF:true
-        Mixer1:SetWangs( true )         --Show/hide the R G B A indicators  DEF:true
-        Mixer1:SetColor( Color(GetConVarNumber("sonic_light_r"), GetConVarNumber("sonic_light_g"), GetConVarNumber("sonic_light_b")) )  --Set the default color
-        Mixer1.ValueChanged = function(self,col)
-            RunConsoleCommand("sonic_light_r", col.r)
-            RunConsoleCommand("sonic_light_g", col.g)
-            RunConsoleCommand("sonic_light_b", col.b)
+            local mixer = vgui.Create("DColorMixer")
+            mixer:SetAlphaBar(false)
+            mixer:SetColor(Color(GetConVarNumber(r_convar), GetConVarNumber(g_convar), GetConVarNumber(b_convar)))
+            mixer.ValueChanged = function(_self, col)
+                RunConsoleCommand(r_convar, col.r)
+                RunConsoleCommand(g_convar, col.g)
+                RunConsoleCommand(b_convar, col.b)
+            end
+            panel:AddItem(mixer)
         end
-        panel:AddItem(Mixer1)
 
-        local DLabel3 = vgui.Create( "DLabel" )
-        DLabel3:SetText( "Secondary color" )
-        panel:AddItem(DLabel3)
+        addColorMixer("Primary color", "sonic_light_r", "sonic_light_g", "sonic_light_b")
+        addColorMixer("Secondary color", "sonic_light2_r", "sonic_light2_g", "sonic_light2_b")
+        addColorMixer("Off color", "sonic_lightoff_r", "sonic_lightoff_g", "sonic_lightoff_b")
 
-        local Mixer2 = vgui.Create( "DColorMixer" )
-        Mixer2:SetPalette( true )       --Show/hide the palette         DEF:true
-        Mixer2:SetAlphaBar( false )         --Show/hide the alpha bar       DEF:true
-        Mixer2:SetWangs( true )         --Show/hide the R G B A indicators  DEF:true
-        Mixer2:SetColor( Color(GetConVarNumber("sonic_light2_r"), GetConVarNumber("sonic_light2_g"), GetConVarNumber("sonic_light2_b")) )  --Set the default color
-        Mixer2.ValueChanged = function(self,col)
-            RunConsoleCommand("sonic_light2_r", col.r)
-            RunConsoleCommand("sonic_light2_g", col.g)
-            RunConsoleCommand("sonic_light2_b", col.b)
-        end
-        panel:AddItem(Mixer2)
-
-        local DLabel4 = vgui.Create( "DLabel" )
-        DLabel4:SetText( "Off color" )
-        panel:AddItem(DLabel4)
-
-        local Mixer3 = vgui.Create( "DColorMixer" )
-        Mixer3:SetPalette( true )       --Show/hide the palette         DEF:true
-        Mixer3:SetAlphaBar( false )         --Show/hide the alpha bar       DEF:true
-        Mixer3:SetWangs( true )         --Show/hide the R G B A indicators  DEF:true
-        Mixer3:SetColor( Color(GetConVarNumber("sonic_lightoff_r"), GetConVarNumber("sonic_lightoff_g"), GetConVarNumber("sonic_lightoff_b")) )  --Set the default color
-        Mixer3.ValueChanged = function(self,col)
-            RunConsoleCommand("sonic_lightoff_r", col.r)
-            RunConsoleCommand("sonic_lightoff_g", col.g)
-            RunConsoleCommand("sonic_lightoff_b", col.b)
-        end
-        panel:AddItem(Mixer3)
-
-        local checkboxes={}
         for _,v in pairs(checkbox_options) do
-            local checkBox = vgui.Create( "DCheckBoxLabel" )
-            checkBox:SetText( v[1] )
-            checkBox:SetValue( assert(GetConVar(v[2])):GetBool() )
-            checkBox:SetConVar( v[2] )
-            panel:AddItem(checkBox)
-            table.insert(checkboxes, checkBox)
+            panel:CheckBox(v[1], v[2])
         end
     end)
 end)
