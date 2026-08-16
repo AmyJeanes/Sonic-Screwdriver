@@ -6,6 +6,15 @@ SWEP.AdminSpawnable = false
 
 SWEP.UseHands = true
 
+-- Support for https://github.com/AmyJeanes/SpawnKit
+SWEP.SpawnKit = {
+    ---@param ply Player
+    ---@param token string?
+    give = function(ply, token)
+        SonicSD:GiveSonic(ply, nil, { token or ply:GetInfo("sonic_model") }, true)
+    end,
+}
+
 ---@api
 ---@return string
 function SWEP:GetSonicID()
