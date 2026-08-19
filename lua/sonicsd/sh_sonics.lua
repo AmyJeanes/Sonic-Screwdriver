@@ -81,7 +81,7 @@ end
 ---@class sonicsd_sonic_complete : sonicsd_sonic
 ---@field OptionID number?
 
----@type table<string, sonicsd_sonic>
+---@type table<string, sonicsd_sonic_complete>
 SonicSD.sonics={}
 ---@api
 ---@param t sonicsd_sonic

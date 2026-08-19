@@ -2,10 +2,12 @@
     "runtime": {
         "version": "LuaJIT"
     },
+    "gmod": {
+        "annotationsPath": "./.tools/glua-api"
+    },
     "workspace": {
         "library": [
             "./.luatypes",
-            "./.tools/glua-api",
             "../TARDIS/lua",
             "../TARDIS/.luatypes",
             "../TARDIS-Legacy",
